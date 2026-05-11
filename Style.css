@@ -1,0 +1,209 @@
+:root {
+
+    --background-primary: #000000;
+
+    --font-color-primary: #ffffff;
+
+    --scroll: rgba(255, 255, 255, 0.25);
+    --scroll-hover: #fff;
+
+    --nav-links: rgba(255, 255, 255, 0.25);
+    --nav-links-hover: #fff;
+    --menu-border-color: rgba(255, 255, 255, 0.1);
+}
+body {
+    font-family: "SN Pro", sans-serif;
+    color: var(--font-color-primary);
+    background-color: var(--background-primary);
+    line-height: 1.45;
+    margin: 0;
+    padding-top: 4rem;
+    font-size: 10pt;
+    height: 100dvh;
+}
+
+.content {
+    max-width: 80rem;
+    display: flex;
+    flex-direction: column;
+    padding: 0 1rem 0 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100%;
+    transition: opacity 300ms ease-in-out;
+}
+
+.content-wrapper {
+    transition: all 0.6s;
+}
+
+.header {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+h1 {
+    font-family: "SN Pro", sans-serif;
+    font-size: 24pt;
+    font-weight: 800;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.5px;
+}
+
+.First-section {
+    display:flex;
+    flex-direction: row;
+}
+
+/* ============================================
+   Меню
+============================================ */
+
+/* Основная панель навигации */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: var(--background-primary);
+    transition: transform 0.3s ease-in-out;
+    border-bottom: 1px solid var(--menu-border-color);
+}
+
+/* Класс для скрытия при скролле (через JS) */
+.navbar--hidden {
+    transform: translateY(-100%);
+}
+
+/* Ограничивающий контейнер внутри навигации */
+.nav-container {
+    max-width: 80rem;
+    width: 100%; /* Чтобы контейнер занимал всю доступную ширину до 80rem */
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1rem 0;
+    box-sizing: border-box; /* Чтобы padding не увеличивал ширину сверх 80rem */
+    
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between; /* Распределяем: Лого слева, Линки в центре, Акшены справа */
+    gap: 1rem;
+}
+
+/* Стилизация Логотипа */
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0; /* Чтобы логотип не сжимался */
+}
+
+.logo-img {
+    height: 2rem;
+    width: auto;
+    display: block;
+    /* transition для плавного ховера */
+    transition: opacity 0.3s ease;
+}
+
+.logo:hover {
+    opacity: 0.8;
+}
+
+/* Список ссылок (меню) */
+.nav-links {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 1.5rem; /* Расстояние между пунктами меню */
+    flex-grow: 1; /* Позволяет меню занимать свободное пространство */
+    justify-content:left;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--nav-links);
+    font-weight: 500;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+    white-space: nowrap; /* Чтобы пункты не переносились на новую строку */
+}
+
+.nav-links a:hover {
+    color: var(--nav-links-hover);
+}
+
+.nav-links a.active {
+    color: var(--nav-links-hover) !important; /* Или любой другой яркий цвет */
+    font-weight: 600; /* Делаем чуть жирнее для акцента */
+    transition: all 0.3s ease;
+}
+
+/* Правая часть: Иконки и Свитчер */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-shrink: 0; /* Чтобы блок не сжимался */
+}
+
+.nav-underline {
+    position: absolute;
+    bottom: 0.75rem; /* На сколько ниже текста будет линия */
+    left: 0;
+    height: 2px;
+    background-color: var(--nav-links-hover); /* Цвет линии */
+    transition: all 0.3s ease-in-out; /* Плавность перемещения */
+    pointer-events: none; /* Чтобы линия не мешала кликать */
+    width: 0; /* Изначально ширина 0 */
+}
+
+.social-icons {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-link img {
+    width: 1.2rem;
+    height: 1.2rem;
+    display: block;
+    transition: opacity 0.3s;
+}
+
+/* ============================================
+   Стили для скроллбаров
+============================================ */
+
+::-webkit-scrollbar {
+    width: 0.5rem; /* ширина вертикального скролла */
+    height: 0.5rem; /* высота горизонтального скролла */
+    transition: all 0.3s;
+}
+
+::-webkit-scrollbar-track {
+    background: #000; /* фон трека */
+    border-radius: 2rem;
+    margin: 1rem;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scroll);
+    border-radius: 2rem;
+    border: 0.05rem solid transparent; 
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scroll-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+    border: 0 solid transparent;
+}
+
+::-webkit-scrollbar-button {
+    display: none;
+}
