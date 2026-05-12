@@ -1,7 +1,7 @@
 :root {
 
     --background-primary: #000000;
-    --background-about-me: #254870;
+    --background-about-me: #162435;
 
     --font-color-primary: #ffffff;
     --font-color-secondary: rgba(255, 255, 255, 0.75);
@@ -49,6 +49,12 @@ h2 {
     margin: 0;
 }
 
+h3 {
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0;
+}
+
 a {
     font-size: 1.25rem;
     font-weight: 400;
@@ -56,9 +62,17 @@ a {
     color: var(--font-color-secondary);
 }
 
+li {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--font-color-secondary);
+}
+
+
 /* ============================================
    Обо мне
 ============================================ */
+
 
 .First-section {
     display:flex;
@@ -118,9 +132,50 @@ a {
     width: 50%;
 }
 
+.education-wrapper {
+    width: 100%;
+    padding: 4rem 0 4rem 0;
+    background-image: url(/images/education-background.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+}
+
+.education {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem 0 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100%;
+    max-width: 80rem;
+    padding-bottom: 20rem;
+}
+
+.education-text {
+    width: 50%;
+}
+
+.education-image {
+    width: 50%;
+}
+
+.skills {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem 0 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100%;
+    max-width: 80rem;
+}
+
 /* ============================================
    Меню
 ============================================ */
+
 
 /* Основная панель навигации */
 .navbar {
@@ -248,9 +303,11 @@ a {
     outline-offset: 0.1rem;
 }
 
+
 /* ============================================
    Стили для скроллбаров
 ============================================ */
+
 
 ::-webkit-scrollbar {
     width: 0.5rem; /* ширина вертикального скролла */
@@ -281,4 +338,65 @@ a {
 
 ::-webkit-scrollbar-button {
     display: none;
+}
+
+
+/* ============================================
+   Аккордион
+============================================ */
+
+
+/* Контейнер айтема */
+.accordion-item {
+    border-bottom: 1px solid var(--menu-border-color);
+    cursor: pointer; /* Делаем всю строку кликабельной */
+}
+
+/* Заголовок и стрелка */
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    gap: 2rem;
+}
+
+.accordion-title {
+    display: flex;
+    flex-direction: column;
+}
+
+.accordion-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+/* Скрытый контент */
+.accordion-content {
+    display: grid;
+    grid-template-rows: 0fr; /* Схлопнуто */
+    transition: grid-template-rows 0.3s ease-out;
+}
+
+/* Внутренний контейнер (нужен для корректной анимации grid) */
+.accordion-inner {
+    overflow: hidden;
+    min-height: 0;
+}
+
+.accordion-inner p {
+    padding-bottom: 2rem;
+    font-size: 1.25rem;
+    color: var(--font-color-secondary);
+    margin: 0;
+}
+
+/* Состояние при открытии */
+.accordion-item.is-open .accordion-content {
+    grid-template-rows: 1fr; /* Раскрыто */
+}
+
+.accordion-item.is-open .accordion-icon {
+    transform: rotate(180deg);
 }

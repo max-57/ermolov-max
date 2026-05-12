@@ -20,6 +20,9 @@ async function navigate(pageId) {
             // 3. Замена контента
             contentArea.innerHTML = html;
 
+            initAccordion();
+            initExperienceCounter();
+
             // 4. Появление (Opacity 1)
             contentArea.style.opacity = '1';
 
@@ -165,3 +168,76 @@ window.addEventListener('scroll', () => {
 });
 
 document.addEventListener('DOMContentLoaded', initNavbar);
+
+
+//=======================================================
+// Аккордион
+//=========================================================
+
+
+function initAccordion() {
+    const items = document.querySelectorAll('.accordion-item');
+    
+    items.forEach(item => {
+        item.addEventListener('click', () => {  
+            items.forEach(otherItem => {
+                if (otherItem !== item) otherItem.classList.remove('is-open');
+            });
+            item.classList.toggle('is-open');
+        });
+    });
+}
+
+
+//=======================================================
+// Счётчик опыта
+//=========================================================
+
+
+function initExperienceCounter() {
+    const counterElement = document.getElementById('experience-counter');
+    if (!counterElement) return;
+
+    const startDate = new Date('2021-06-17');
+    const today = new Date();
+    const subtractDays = 365;
+
+    // Вычитаем 380 дней из стажа (переводим дни в миллисекунды)
+    // 380 дней * 24 часа * 60 минут * 60 секунд * 1000 мс
+    const adjustedStartDate = new Date(startDate.getTime() + (subtractDays * 24 * 60 * 60 * 1000));
+
+    function updateCounter() {
+        const now = new Date();
+        let years = now.getFullYear() - adjustedStartDate.getFullYear();
+        let months = now.getMonth() - adjustedStartDate.getMonth();
+
+        // Корректировка, если текущий месяц меньше месяца начала
+        if (months < 0 || (months === 0 && now.getDate() < adjustedStartDate.getDate())) {
+            years--;
+            months += 12;
+        }
+
+        // Склонение слов
+        const yearText = getNoun(years, 'год', 'года', 'лет');
+        const monthText = getNoun(months, 'месяц', 'месяца', 'месяцев');
+
+        let result = '';
+        if (years > 0) result += `${years} ${yearText} `;
+        if (months > 0) result += `${months} ${monthText}`;
+
+        counterElement.textContent = result || 'Менее месяца';
+    }
+
+    // Вспомогательная функция для склонения
+    function getNoun(number, one, two, five) {
+        let n = Math.abs(number);
+        n %= 100;
+        if (n >= 5 && n <= 20) return five;
+        n %= 10;
+        if (n === 1) return one;
+        if (n >= 2 && n <= 4) return two;
+        return five;
+    }
+
+    updateCounter();
+}
