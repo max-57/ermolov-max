@@ -22,6 +22,7 @@ async function navigate(pageId) {
 
             initAccordion();
             initExperienceCounter();
+            initMarquee();
 
             // 4. Появление (Opacity 1)
             contentArea.style.opacity = '1';
@@ -218,12 +219,12 @@ function initExperienceCounter() {
         }
 
         // Склонение слов
-        const yearText = getNoun(years, 'год', 'года', 'лет');
-        const monthText = getNoun(months, 'месяц', 'месяца', 'месяцев');
+        const yearText = getNoun(years, '.', '.', '.');
+        const monthText = getNoun(months, '', '', '');
 
         let result = '';
-        if (years > 0) result += `${years} ${yearText} `;
-        if (months > 0) result += `${months} ${monthText}`;
+        if (years > 0) result += `${years}${yearText}`;
+        if (months > 0) result += `${months}${monthText}`;
 
         counterElement.textContent = result || 'Менее месяца';
     }
@@ -240,4 +241,25 @@ function initExperienceCounter() {
     }
 
     updateCounter();
+}
+
+
+//=======================================================
+// Бегущая строка
+//=========================================================
+
+
+function initMarquee() {
+    const track = document.querySelector('.marquee-track');
+    const initialList = document.querySelector('.marquee-list');
+    
+    // Проверка: если элемента нет или клоны уже созданы — ничего не делаем
+    if (!track || !initialList || track.children.length > 1) return;
+
+    // Создаем два клона для идеально бесконечного цикла
+    const cloneA = initialList.cloneNode(true);
+    const cloneB = initialList.cloneNode(true);
+    
+    track.appendChild(cloneA);
+    track.appendChild(cloneB);
 }
