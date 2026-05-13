@@ -14,6 +14,10 @@
     --nav-links-hover: #fff;
     --menu-border-color: rgba(255, 255, 255, 0.1);
 
+    --btn-bg: rgba(255, 255, 255, 0.05);
+    --btn-border: rgba(255, 255, 255, 0.12);
+    --glow-color: rgba(255, 255, 255, 0.3);
+
     /* Цвета для "Обо мне" по умолчанию */
     --bg-blob-1: #350920;
     --bg-blob-2: #1aff00;
@@ -170,6 +174,33 @@ li {
     margin-top: auto;
     margin-bottom: auto;
     width: 66%;
+    display:flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.logo-main {
+    /* Геометрия */
+    width: 33%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    
+    /* Внутренние отступы */
+    padding: 2rem;
+    
+    /* Поведение картинки внутри контейнера */
+    object-fit: cover;
+    
+    /* Добавим щепотку стиля из макета */
+    display: block; /* Убирает лишние зазоры снизу */
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1)); /* Легкое свечение */
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* Эффект при наведении, чтобы логотип "оживал" */
+.logo-main:hover {
+    transform: scale(1.02);
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
 }
 
 .about-me-wrapper {
@@ -182,9 +213,11 @@ li {
 
 .about-me-line {
     
-    width: 100%;
+    width: 120%;
     padding-bottom: 6rem;
-
+    overflow:hidden;
+    margin-left: -10rem;
+    margin-right: -10rem;
     transform: rotate(5deg);
 }
 
@@ -223,6 +256,7 @@ li {
 
 .about-me-image {
     width: 50%;
+    height: auto;
 }
 
 .experience {
@@ -355,12 +389,6 @@ li {
     border-radius: 100px;
     font-size: 0.9rem;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.tag:hover {
-    background: #fff;
-    color: #000;
-    transform: translateY(-3px);
 }
 
 /* ПРОГРЕСС ЛИНИИ */
@@ -1007,51 +1035,106 @@ li {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem 2rem;
+    padding: 1rem 2.2rem;
+    width: fit-content;
     
-    /* Базовый дизайн (подправь под себя) */
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* Стекло и форма */
+    background: var(--btn-bg);
+    border: 1px solid var(--btn-border);
     border-radius: 100px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     
-    color: #fff;
+    /* Текст и шрифт */
+    color: var(--font-color-primary);
     text-decoration: none;
     font-weight: 500;
+    font-family: inherit;
+    letter-spacing: 0.5px;
+    
     cursor: pointer;
     overflow: hidden;
-    transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+    z-index: 1;
+    
+    /* Плавность всех состояний */
+    transition: 
+        transform 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+        border-color 0.4s ease,
+        box-shadow 0.4s ease,
+        color 0.4s ease;
 }
 
-/* Эффект "ртути" (инверсия) */
-.btn[data-magnetic="true"]::before {
+/* 1. Эффект "Ртутной волны" (Заливка) */
+.btn::before {
     content: '';
     position: absolute;
-    top: 50%;
+    top: 100%; /* Начинаем снизу */
     left: 50%;
-    width: 0;
-    height: 0;
+    width: 150%;
+    aspect-ratio: 1/1;
     background: #fff;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.5s ease, height 0.5s ease;
+    border-radius: 42%; /* Округлая органика */
+    transform: translate(-50%, 0%) scale(0);
+    transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
     mix-blend-mode: difference;
     z-index: 1;
-    filter: blur(30);
 }
 
+/* 2. Световой блик (Shine) */
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        transparent,
+        rgba(255, 255, 255, 0.15),
+        transparent
+    );
+    transform: skewX(-25deg);
+    z-index: 2;
+}
+
+/* Состояния Hover */
 .btn:hover {
-    color:#000;
+    color: #000; /* Цвет текста станет черным из-за mix-blend или явно */
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 30px -5px var(--glow-color);
+    transform: translateY(-3px);
 }
 
-.btn[data-magnetic="true"]:hover::before {
-    width: 400px;
-    height: 400px;
+.btn:hover::before {
+    transform: translate(-50%, -75%) scale(1.5);
 }
 
-/* Контент внутри (текст, иконки) */
+.btn:hover::after {
+    left: 150%;
+    transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Контент внутри (Текст и SVG) */
 .btn > * {
     position: relative;
-    z-index: 2;
+    z-index: 3; /* Поверх всех эффектов */
+    pointer-events: none;
+}
+
+/* Анимация иконки */
+.btn svg {
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn:hover svg {
+    transform: translateY(2px) scale(1.1);
+}
+
+/* Активное состояние (клик) */
+.btn:active {
+    transform: translateY(-1px) scale(0.97);
+    transition: 0.1s;
 }
 
 /* ============================================

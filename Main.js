@@ -397,7 +397,8 @@ function updateBackground(pageId) {
 
 function initMagneticButtons() {
     // Ищем все кнопки с включенным магнетизмом
-    const buttons = document.querySelectorAll('.btn[data-magnetic="true"]');
+    const buttons = document.querySelectorAll('.btn');
+    const tags = document.querySelectorAll('.tag');
     
     buttons.forEach(btn => {
         btn.addEventListener('mousemove', (e) => {
@@ -407,6 +408,22 @@ function initMagneticButtons() {
             
             // Двигаем кнопку на 30% от отклонения курсора
             btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+        });
+
+        btn.addEventListener('mouseleave', () => {
+            // Возвращаем в центр
+            btn.style.transform = `translate(0px, 0px)`;
+        });
+    });
+
+    tags.forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            // Двигаем кнопку на 30% от отклонения курсора
+            btn.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
         });
 
         btn.addEventListener('mouseleave', () => {
