@@ -60,7 +60,7 @@ body {
     top: -10%;
     left: -10%;
     background-color: var(--bg-blob-1);
-    animation: move-1 10s infinite ease-in-out alternate;
+    animation: move-1 7s infinite ease-in-out alternate;
 }
 
 .blob-2 {
@@ -76,7 +76,7 @@ body {
     width: 45vw;
     height: 45vw;
     background-color: var(--bg-blob-3);
-    animation: move-3 15s infinite ease-in-out alternate;
+    animation: move-3 3s infinite ease-in-out alternate;
 }
 
 /* Разные траектории для хаотичности */
@@ -598,22 +598,6 @@ li {
     color: var(--font-color-primary);
 }
 
-/* Адаптивность для мобилок */
-@media (max-width: 900px) {
-    .project-grid-content {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-    }
-    
-    .project-details-accordion {
-        position: static;
-    }
-    
-    .project-header-info h1 {
-        font-size: 2.5rem;
-    }
-}
-
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -1013,19 +997,89 @@ li {
 }
 
 
+/* ============================================
+   Кнопка
+============================================ */
 
+
+.btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 2rem;
+    
+    /* Базовый дизайн (подправь под себя) */
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Эффект "ртути" (инверсия) */
+.btn[data-magnetic="true"]::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.5s ease, height 0.5s ease;
+    mix-blend-mode: difference;
+    z-index: 1;
+    filter: blur(30);
+}
+
+.btn:hover {
+    color:#000;
+}
+
+.btn[data-magnetic="true"]:hover::before {
+    width: 400px;
+    height: 400px;
+}
+
+/* Контент внутри (текст, иконки) */
+.btn > * {
+    position: relative;
+    z-index: 2;
+}
 
 /* ============================================
    Адаптация
 ============================================ */
+
+
 @media (max-width: 1090px) {
     h1 {
         font-size: 6rem;
     }
+
+    .project-grid-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+    
+    .project-details-accordion {
+        position: static;
+    }
+    
+    .project-header-info h1 {
+        font-size: 2.5rem;
+    }
 }
 
 @media (max-width: 768px) {
-    .First-section, .about-me, .experience .skills-container {
+    .First-section, .about-me, .experience, .skills-container {
         flex-direction: column;
     }
 
