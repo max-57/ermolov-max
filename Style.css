@@ -1,7 +1,8 @@
 :root {
 
     --background-primary: #000000;
-    --background-about-me: #162435;
+    --background-about-me: rgba(255, 255, 255, 0.1);
+    --background-card: rgba(255, 255, 255, 0.1);
 
     --font-color-primary: #ffffff;
     --font-color-secondary: rgba(255, 255, 255, 0.75);
@@ -12,16 +13,87 @@
     --nav-links: rgba(255, 255, 255, 0.25);
     --nav-links-hover: #fff;
     --menu-border-color: rgba(255, 255, 255, 0.1);
+
+    /* Цвета для "Обо мне" по умолчанию */
+    --bg-blob-1: #350920;
+    --bg-blob-2: #1aff00;
+    --bg-blob-3: #0a2341;
 }
+
 body {
     font-family: "Google Sans Flex", sans-serif;
     color: var(--font-color-primary);
     background-color: var(--background-primary);
     line-height: 1.45;
     margin: 0;
-    padding-top: 4rem;
+    padding-top: 6rem;
     font-size: 10pt;
     height: 100dvh;
+    overflow-x: hidden;
+}
+
+.bg-mesh {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Должен быть самым нижним */
+    overflow: hidden;
+    pointer-events: none; /* Чтобы фон не перехватывал клики */
+    filter: blur(160px);
+    /* Форсируем использование видеокарты */
+    transform: translateZ(0); 
+}
+
+.blob {
+    position: absolute;
+    width: 35vw;
+    height: 35vw;
+    border-radius: 50%;
+    transition: background-color 2s ease;
+    /* Главное для производительности: */
+    will-change: transform; 
+}
+
+.blob-1 {
+    top: -10%;
+    left: -10%;
+    background-color: var(--bg-blob-1);
+    animation: move-1 10s infinite ease-in-out alternate;
+}
+
+.blob-2 {
+    bottom: -5%;
+    right: -5%;
+    background-color: var(--bg-blob-2);
+    animation: move-2 5s infinite ease-in-out alternate;
+}
+
+.blob-3 {
+    top: 30%;
+    left: 20%;
+    width: 45vw;
+    height: 45vw;
+    background-color: var(--bg-blob-3);
+    animation: move-3 15s infinite ease-in-out alternate;
+}
+
+/* Разные траектории для хаотичности */
+@keyframes move-1 {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(90%, 165%) scale(1.7); }
+}
+
+@keyframes move-2 {
+    0% { transform: translate(0, 0) scale(1.1); }
+    100% { transform: translate(-75%, -100%) scale(1.4); }
+}
+
+@keyframes move-3 {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(-40%, 30%) scale(1.1); }
+    100% { transform: translate(-60%, 70%) scale(0.8); }
 }
 
 .content {
@@ -58,6 +130,13 @@ h3 {
 }
 
 a {
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin: 0;
+    color: var(--font-color-secondary);
+}
+
+p {
     font-size: 1.25rem;
     font-weight: 400;
     margin: 0;
@@ -102,7 +181,7 @@ li {
 }
 
 .about-me-line {
-    background: var(--background-about-me);
+    
     width: 100%;
     padding-bottom: 6rem;
 
@@ -120,7 +199,8 @@ li {
     right: -10rem;
     
     /* Заливаем тем же цветом */
-    background: inherit; 
+    background: var(--background-about-me);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     
     /* Кладём под контент самого блока */
     z-index: -1; 
@@ -164,12 +244,31 @@ li {
 }
 
 .education-wrapper {
+    position: relative; /* Создаем контекст для позиционирования */
     width: 100%;
     padding: 4rem 0 4rem 0;
+    overflow: hidden;
+}
+
+.education-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    
+    /* Переносим сюда настройки фона */
     background-image: url(/images/education-background.png);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center bottom;
+    
+    /* Накладываем маску только на этот слой */
+    mask-image: linear-gradient(to bottom, transparent, black 70%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 70%);
+    
+    z-index: -1; /* Уводим на задний план */
 }
 
 .education {
@@ -184,14 +283,6 @@ li {
     padding-bottom: 20rem;
 }
 
-.education-text {
-    width: 50%;
-}
-
-.education-image {
-    width: 50%;
-}
-
 .skills {
     display:flex;
     flex-direction: column;
@@ -202,6 +293,332 @@ li {
     height: 100%;
     max-width: 80rem;
 }
+
+.skills-dashboard {
+    width: 100%;
+}
+
+.skills-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    padding: 0 1rem 0 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 80rem;
+}
+
+.skill-card {
+    background: var(--background-card);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 2.5rem;
+    backdrop-filter: blur(10px);
+    width: 100%;
+}
+
+.card-label {
+    font-family: monospace;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.2em;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.card-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+/* ТЕГИ */
+.tag-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.tag-category {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.3);
+    width: 100%;
+    margin-bottom: 0.25rem;
+}
+
+.tag {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.6rem 1.2rem;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tag:hover {
+    background: #fff;
+    color: #000;
+    transform: translateY(-3px);
+}
+
+/* ПРОГРЕСС ЛИНИИ */
+.metric-item {
+    margin-bottom: 2rem;
+}
+
+.metric-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    font-weight: 500;
+}
+
+.progress-wrapper {
+    width: 100%;
+    height: 2px; /* Очень тонкая, стильная линия */
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: visible;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    background: #fff;
+    position: relative;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    transition: width 2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Кружочек на конце линии */
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    right: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #fff;
+}
+
+@media (max-width: 900px) {
+    .skills-container { grid-template-columns: 1fr; }
+}
+
+
+/* ============================================
+   Портфолио
+============================================ */
+
+
+/* Сетка для карточек на главной или в портфолио */
+.projects-container {
+    display: grid;
+    /* Создаем 3 колонки равной ширины (1fr) */
+    grid-template-columns: repeat(3, 1fr); 
+    /* Высота строк подстраивается под самый высокий элемент в ряду */
+    grid-auto-rows: auto; 
+    /* Расстояние между карточками */
+    gap: 2rem; 
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem 0 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 80rem;
+}
+
+/* Компонент карточки */
+.project-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+    background-color: var(--background-card);
+    border-radius: 1rem;
+}
+
+.project-card:hover {
+    transform: translateY(-8px);
+}
+
+.project-card:hover .card-preview img {
+    transform: scale(1.03);
+}
+
+/* Обёртка картинки с сохранением пропорций */
+.card-preview {
+    width: 100%;
+    aspect-ratio: 1440 / 1024;
+    overflow: hidden;
+    border-radius: 1rem;
+}
+
+.card-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+/* Инфо-блок карточки */
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0 1rem 1rem 1rem;
+}
+
+.card-tag {
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--font-color-secondary);
+}
+
+.card-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.card-excerpt {
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+
+/* =======================================================
+   СТРАНИЦА ПРОЕКТА (КЕЙС)
+========================================================= */
+
+.project-page {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    width: 100%;
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 2rem 1rem 8rem 1rem;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Hero секция */
+.project-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.project-cover {
+    width: 100%;
+    aspect-ratio: 1440 / 1024;
+    object-fit: cover;
+    border-radius: 1.5rem;
+}
+
+.project-header-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.project-header-info h1 {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0;
+}
+
+.project-subtitle {
+    font-size: 1.5rem;
+    color: var(--font-color-secondary);
+    max-width: 800px;
+    line-height: 1.4;
+}
+
+/* Контентная сетка проекта */
+.project-grid-content {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr; /* Основной текст шире сайдбара с аккордеоном */
+    gap: 4rem;
+    align-items: start;
+}
+
+.project-section h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.project-section p {
+    font-size: 1.2rem;
+    color: var(--font-color-secondary);
+    line-height: 1.6;
+}
+
+/* Стилизация аккордеона внутри проекта */
+.project-details-accordion {
+    position: sticky;
+    top: 100px; /* Прилипает при скролле */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Твои существующие стили .accordion-item дополним спецификой для страниц */
+.project-details-accordion .accordion-item {
+    background: var(--background-about-me);
+    border: 1px solid var(--menu-border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+}
+
+.project-details-accordion .accordion-title span {
+    display: block;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--font-color-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.project-details-accordion .accordion-title small {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--font-color-primary);
+}
+
+/* Адаптивность для мобилок */
+@media (max-width: 900px) {
+    .project-grid-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+    
+    .project-details-accordion {
+        position: static;
+    }
+    
+    .project-header-info h1 {
+        font-size: 2.5rem;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 
 /* ============================================
    Меню
@@ -334,6 +751,25 @@ li {
     outline-offset: 0.1rem;
 }
 
+.nav-back {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: var(--font-color-primary);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    font-size: 0.9rem; /* Чтобы соответствовало твоему капсу */
+}
+
+.nav-back img {
+    transition: transform 0.3s ease;
+}
+
+/* При наведении стрелка чуть "отпрыгивает" вверх/назад */
+.nav-back:hover img {
+    transform: rotate(90deg) translateY(3px) !important;
+}
 
 /* ============================================
    Стили для скроллбаров
@@ -479,6 +915,105 @@ li {
 }
 
 
+/* ============================================
+   Футер
+============================================ */
+
+
+.footer {
+    background-color: var(--background-primary);
+    border-top: 1px solid var(--menu-border-color);
+    padding: 4rem 1rem 2rem;
+    margin-top: 2rem; /* Если контента мало, футер прижмется к низу */
+}
+
+.footer-container {
+    max-width: 80rem;
+    margin: 0 auto;
+    display: flex;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Брендинг */
+.footer-brand {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+}
+
+.footer-logo {
+    width: 40px;
+    height: auto;
+}
+
+/* Списки ссылок */
+.footer-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.footer-nav a, .footer-contacts a {
+    text-decoration: none;
+    color: var(--font-color-secondary);
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+}
+
+.footer-nav a:hover, .footer-contacts a:hover {
+    color: var(--font-color-primary);
+}
+
+/* Копирайт в самом низу */
+.footer-bottom {
+    max-width: 1200px;
+    margin: 4rem auto 0;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: center;
+}
+
+.footer-bottom p {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.footer-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Расстояние между иконкой и текстом */
+    text-decoration: none;
+    color: var(--font-color-secondary);
+    transition: color 0.3s ease;
+}
+
+.footer-contact-item img {
+    width: 20px;  /* Размер иконок в футере чуть меньше, чем в шапке */
+    height: 20px;
+    opacity: 0.6; /* Делаем их чуть приглушенными */
+    transition: opacity 0.3s ease;
+}
+
+.footer-contact-item:hover {
+    color: var(--font-color-primary);
+}
+
+.footer-contact-item:hover img {
+    opacity: 1; /* При наведении иконка становится яркой */
+}
+
+/* Если на мобилках футер центрируется, выравниваем элементы */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+    }
+}
+
+
+
 
 /* ============================================
    Адаптация
@@ -490,7 +1025,7 @@ li {
 }
 
 @media (max-width: 768px) {
-    .First-section, .about-me, .experience {
+    .First-section, .about-me, .experience .skills-container {
         flex-direction: column;
     }
 

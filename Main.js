@@ -1,34 +1,90 @@
 //=======================================================
 //  Меню и переходы
 //=========================================================
+
 // --- ФУНКЦИЯ SPA НАВИГАЦИИ ---
 async function navigate(pageId) {
-    const contentArea = document.querySelector('.content'); // Твой блок контента
+    const contentArea = document.querySelector('.content');
     if (!contentArea) return;
 
-    // 1. Исчезновение (Opacity 0)
     contentArea.style.opacity = '0';
 
-    // Ждем завершения анимации (0.3s)
     setTimeout(async () => {
         try {
-            // 2. Загрузка файла (файлы должны лежать в папке pages/pageId.html)
             const response = await fetch(`./pages/${pageId}.html`);
             if (!response.ok) throw new Error('Ошибка загрузки');
             const html = await response.text();
 
-            // 3. Замена контента
             contentArea.innerHTML = html;
+
+            // Находим все части навигации
+            const menuBox = document.getElementById('menu-container');
+            const logoBox = document.getElementById('logo-container');
+            const actionsBox = document.getElementById('actions-container');
+
+            // Проверяем, является ли страница стандартной (из MenuData.js)
+            const isStandardPage = navbarConfig.menu.some(item => item.link === pageId) || pageId === 'about-me';
+            
+            if (menuBox) {
+                if (!isStandardPage) {
+                    // РЕЖИМ ПРОЕКТА
+                    if (logoBox) logoBox.style.display = 'none';
+                    if (actionsBox) actionsBox.style.display = 'none';
+                    
+                    // Перезаписываем всё меню, так как структура меняется полностью
+                    menuBox.innerHTML = `
+                        <li class="nav-item">
+                            <a href="portfolio" class="nav-back">
+                                <img src="./images/arrow.svg" style="transform: rotate(90deg); width: 1.5rem;" alt="Back">
+                                <span>Назад</span>
+                            </a>
+                        </li>
+                    `;
+                } else {
+                    // СТАНДАРТНЫЙ РЕЖИМ
+                    if (logoBox) logoBox.style.display = 'block';
+                    if (actionsBox) actionsBox.style.display = 'flex';
+
+                    // КРИТИЧЕСКИЙ МОМЕНТ:
+                    // Проверяем, есть ли уже ссылки. Если есть, обновляем только класс active.
+                    // Если нет (вернулись из проекта), рисуем структуру заново.
+                    const hasLinks = menuBox.querySelector('a:not(.nav-back)');
+                    
+                    if (hasLinks) {
+                        // Линия уже существует в DOM, просто обновляем классы у ссылок
+                        const links = menuBox.querySelectorAll('a');
+                        links.forEach(link => {
+                            if (link.getAttribute('href') === pageId) link.classList.add('active');
+                            else link.classList.remove('active');
+                        });
+                    } else {
+                        // Мы вернулись со страницы проекта, нужно восстановить структуру
+                        menuBox.innerHTML = `
+                            ${navbarConfig.menu.map(item => `
+                                <li><a href="${item.link}" class="${item.link === pageId ? 'active' : ''}">${item.title}</a></li>
+                            `).join('')}
+                            <div class="nav-underline" id="underline"></div>
+                        `;
+                    }
+                    
+                    // Запускаем расчет позиции линии
+                    setTimeout(setupUnderline, 10);
+                }
+            }
 
             initAccordion();
             initExperienceCounter();
             initMarquee();
+            initSkillsAnimation();
 
-            // 4. Появление (Opacity 1)
+
+            document.body.dataset.page = pageId; // Можно использовать для специфических стилей
+            updateBackground(pageId);
+
+
             contentArea.style.opacity = '1';
-
-            // 5. Обновляем активный класс в меню и двигаем линию
             updateActiveState(pageId);
+            
         } catch (err) {
             console.error(err);
             contentArea.innerHTML = '<h2>Страница не найдена</h2>';
@@ -36,6 +92,7 @@ async function navigate(pageId) {
         }
     }, 500);
 }
+
 
 function updateActiveState(pageId) {
     const links = document.querySelectorAll('.nav-links a');
@@ -138,7 +195,7 @@ function setupUnderline() {
 function initSPA() {
     // Перехват кликов по меню и логотипу
     document.addEventListener('click', (e) => {
-        const target = e.target.closest('.nav-links a, .logo');
+        const target = e.target.closest('.nav-links a, .logo, .project-card')
         if (target) {
             e.preventDefault();
             const pageId = target.getAttribute('href');
@@ -262,4 +319,71 @@ function initMarquee() {
     
     track.appendChild(cloneA);
     track.appendChild(cloneB);
+}
+
+
+//=======================================================
+// Прогресс лайн
+//=========================================================
+
+
+function initSkillsAnimation() {
+    const bars = document.querySelectorAll('.progress-bar');
+    
+    bars.forEach(bar => {
+        const target = bar.getAttribute('data-target');
+        const valueDisplay = bar.closest('.metric-item').querySelector('.metric-value');
+        
+        // Анимируем ширину
+        setTimeout(() => {
+            bar.style.width = target + '%';
+        }, 300);
+
+        // Анимируем цифры
+        let start = 0;
+        const duration = 2000; // 2 секунды
+        const increment = target / (duration / 16);
+        
+        const count = () => {
+            start += increment;
+            if (start < target) {
+                valueDisplay.textContent = Math.round(start) + '%';
+                requestAnimationFrame(count);
+            } else {
+                valueDisplay.textContent = target + '%';
+            }
+        };
+        count();
+    });
+}
+
+
+//=======================================================
+// Динамичный фон
+//=========================================================
+
+
+const pagePalettes = {
+    'about-me': {
+        '--bg-blob-1': '#321459',
+        '--bg-blob-2': '#042552',
+        '--bg-blob-3': '#580952'
+    },
+    'portfolio': {
+        '--bg-blob-1': '#46bd2c', // Темно-фиолетовый
+        '--bg-blob-2': '#1a9a1e',
+        '--bg-blob-3': '#aa6812'
+    },
+    'fintech': {
+        '--bg-blob-1': '#10bda3', // Глубокий изумрудный для финтеха
+        '--bg-blob-2': '#0adaba',
+        '--bg-blob-3': '#63d6c5'
+    }
+};
+
+function updateBackground(pageId) {
+    const palette = pagePalettes[pageId] || pagePalettes['about-me'];
+    for (const [property, value] of Object.entries(palette)) {
+        document.documentElement.style.setProperty(property, value);
+    }
 }
