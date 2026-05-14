@@ -2,7 +2,6 @@ const navbarConfig = {
     logo: {
         src: './images/Logo.svg',
         alt: 'Лучший продакт дизайнер',
-        link: 'main' // Изменил на ID для SPA
     },
     menu: [
         { title: 'Обо мне', link: 'about-me' },

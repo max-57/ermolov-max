@@ -29,6 +29,11 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+    overflow: hidden;
+}
+
 body {
     font-family: "Google Sans Flex", sans-serif;
     color: var(--font-color-primary);
@@ -706,6 +711,7 @@ li {
     align-items: center;
     text-decoration: none;
     flex-shrink: 0; /* Чтобы логотип не сжимался */
+    
 }
 
 .logo-img {
@@ -714,10 +720,6 @@ li {
     display: block;
     /* transition для плавного ховера */
     transition: opacity 0.3s ease;
-}
-
-.logo:hover {
-    opacity: 0.8;
 }
 
 /* Список ссылок (меню) */
@@ -1265,5 +1267,11 @@ li {
 @media (max-width: 600px) {
    .portfolio-preview-header {
         flex-direction: column;
+    }
+}
+
+@media (max-width: 600px) {
+   .h1 {
+        font-size: 5rem;
     }
 }

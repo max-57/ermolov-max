@@ -127,7 +127,7 @@ function initNavbar() {
 
     if (logoBox) {
         logoBox.innerHTML = `
-            <a href="${navbarConfig.logo.link}" class="logo" data-link>
+            <a class="logo" data-link>
                 <img src="${navbarConfig.logo.src}" alt="${navbarConfig.logo.alt}" class="logo-img">
             </a>`;
     }
@@ -449,3 +449,19 @@ function initMagneticButtons() {
         });
     });
 }
+
+const lenis = new Lenis({
+  duration: 1.2,
+  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Функция плавности
+  direction: 'vertical',
+  gestureDirection: 'vertical',
+  smoothHover: true,
+  smoothWheel: true,
+});
+
+function raf(time) {
+  lenis.raf(time);
+  requestAnimationFrame(raf);
+}
+
+requestAnimationFrame(raf);
