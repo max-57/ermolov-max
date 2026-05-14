@@ -266,9 +266,11 @@ li {
     box-sizing: border-box;
 }
 
-.about-me-image {
-    width: 50%;
-    height: auto;
+.about-me-image img {
+    height: 36rem; 
+    aspect-ratio: 1 / 1; 
+    object-fit: cover; 
+    position: absolute;
 }
 
 .experience {
@@ -1232,15 +1234,11 @@ li {
         flex-direction: row;
         gap: 1rem;
         overflow-x: auto;
-        overflow: visible;
+        padding: 1rem;
     }
 
     .projects-container::-webkit-scrollbar {
         display: none;
-    }
-
-    .project-card {
-        width: 900px !important;
     }
 
     .skills-container {
@@ -1274,23 +1272,36 @@ li {
 
 @media (max-width: 485px) {
     h1 {
-        font-size: 5rem;
+        font-size: 4rem;
     }
 
-    .about-me-image {
-        width: 100%;
+    h2 {
+        font-size: 2.5rem;
+    }
+
+    .about-me-text {
+        padding-top: 2rem;
+    }
+
+    .about-me-image img {
+        width: 100%; 
+        align-self: center;
     }
 
     .education {
         padding-bottom: 24rem;
     }
 
-    .nav-links {
+    .social-icons {
         display: none;
     }
 
-    .project-grid-content {
+    .projects-container {
         display: flex;
         flex-direction: column;
+    }
+
+    .project-card {
+        width: 100%;
     }
 }

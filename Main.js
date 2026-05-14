@@ -440,7 +440,7 @@ function initMagneticButtons() {
             const y = e.clientY - rect.top - rect.height / 2;
             
             // Двигаем кнопку на 30% от отклонения курсора
-            btn.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
+            btn.style.transform = `translate(${x * 0.1}px, ${y * 0.05}px)`;
         });
 
         btn.addEventListener('mouseleave', () => {
