@@ -399,6 +399,7 @@ function initMagneticButtons() {
     // Ищем все кнопки с включенным магнетизмом
     const buttons = document.querySelectorAll('.btn');
     const tags = document.querySelectorAll('.tag');
+    const projects = document.querySelectorAll('.project-card');
     
     buttons.forEach(btn => {
         btn.addEventListener('mousemove', (e) => {
@@ -417,6 +418,22 @@ function initMagneticButtons() {
     });
 
     tags.forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            // Двигаем кнопку на 30% от отклонения курсора
+            btn.style.transform = `translate(${x * 0.1}px, ${y * 0.4}px)`;
+        });
+
+        btn.addEventListener('mouseleave', () => {
+            // Возвращаем в центр
+            btn.style.transform = `translate(0px, 0px)`;
+        });
+    });
+
+    projects.forEach(btn => {
         btn.addEventListener('mousemove', (e) => {
             const rect = btn.getBoundingClientRect();
             const x = e.clientX - rect.left - rect.width / 2;

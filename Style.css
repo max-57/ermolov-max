@@ -3,6 +3,7 @@
     --background-primary: #000000;
     --background-about-me: rgba(255, 255, 255, 0.1);
     --background-card: rgba(255, 255, 255, 0.1);
+    --border-card: rgba(255, 255, 255, 0.3);
 
     --font-color-primary: #ffffff;
     --font-color-secondary: rgba(255, 255, 255, 0.75);
@@ -262,6 +263,7 @@ li {
 .experience {
     display:flex;
     flex-direction: row;
+    gap: 1.5rem;
     padding: 0 1rem 0 1rem;
     margin-left: auto;
     margin-right: auto;
@@ -273,6 +275,13 @@ li {
     width: 50%;
 }
 
+.experience-title {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
 .experience-image {
     width: 50%;
 }
@@ -282,6 +291,7 @@ li {
     width: 100%;
     padding: 4rem 0 4rem 0;
     overflow: hidden;
+    margin-bottom: -2rem;
 }
 
 .education-wrapper::before {
@@ -308,13 +318,25 @@ li {
 .education {
     display:flex;
     flex-direction: column;
-    align-items: center;
+    gap: 1rem;
     padding: 0 1rem 0 1rem;
     margin-left: auto;
     margin-right: auto;
     height: 100%;
     max-width: 80rem;
     padding-bottom: 20rem;
+}
+
+.specialization span {
+    color: #fff;
+    font-weight: 500;
+}
+
+.edu-content .tag-group {
+    margin-top: 3rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .skills {
@@ -344,17 +366,20 @@ li {
 
 .skill-card {
     background: var(--background-card);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    padding: 2.5rem;
+    border: 0.0625rem solid var(--border-card);
+    border-radius: 1.75rem;
+    padding: 1rem;
     backdrop-filter: blur(10px);
     width: 100%;
+    display:flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .card-label {
     font-family: monospace;
-    font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.4);
+    font-size: 1rem;
+    color: var(--font-color-secondary);
     letter-spacing: 0.2em;
     display: block;
     margin-bottom: 0.5rem;
@@ -368,18 +393,10 @@ li {
 
 /* ТЕГИ */
 .tag-group {
-    margin-bottom: 1.5rem;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
     align-items: center;
-}
-
-.tag-category {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.3);
-    width: 100%;
-    margin-bottom: 0.25rem;
 }
 
 .tag {
@@ -393,22 +410,24 @@ li {
 
 /* ПРОГРЕСС ЛИНИИ */
 .metric-item {
-    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
 .metric-info {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.8rem;
     font-weight: 500;
+    align-items: flex-end;
 }
 
 .progress-wrapper {
     width: 100%;
-    height: 2px; /* Очень тонкая, стильная линия */
+    height: 1rem; /* Очень тонкая, стильная линия */
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
-    overflow: visible;
+    border-radius: 99rem;
+    overflow: hidden;
 }
 
 .progress-bar {
@@ -418,26 +437,26 @@ li {
     position: relative;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
     transition: width 2s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* Кружочек на конце линии */
-.progress-bar::after {
-    content: '';
-    position: absolute;
-    right: -4px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 8px;
-    height: 8px;
-    background: #fff;
-    border-radius: 50%;
-    box-shadow: 0 0 10px #fff;
+    border-radius: 99rem;
 }
 
 @media (max-width: 900px) {
     .skills-container { grid-template-columns: 1fr; }
 }
 
+.portfolio-preview {
+    display:flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.portfolio-preview-header {
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    max-width: 80rem;
+    padding: 0 1rem 0 1rem;
+}
 
 /* ============================================
    Портфолио
@@ -452,7 +471,7 @@ li {
     /* Высота строк подстраивается под самый высокий элемент в ряду */
     grid-auto-rows: auto; 
     /* Расстояние между карточками */
-    gap: 2rem; 
+    gap: 1.5rem; 
     width: 100%;
     margin: 0 auto;
     padding: 0 1rem 0 1rem;
@@ -468,17 +487,24 @@ li {
     gap: 1rem;
     text-decoration: none;
     color: inherit;
-    transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+    transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
     background-color: var(--background-card);
-    border-radius: 1rem;
+    border: 0.0625rem solid var(--border-card);
+    border-radius: 1.75rem;
+    padding: 1rem;
 }
 
 .project-card:hover {
     transform: translateY(-8px);
+    border-radius: 1.5rem;
 }
 
 .project-card:hover .card-preview img {
     transform: scale(1.03);
+}
+
+.project-card:hover .card-preview {
+    border-radius: 0.75rem;
 }
 
 /* Обёртка картинки с сохранением пропорций */
@@ -487,13 +513,14 @@ li {
     aspect-ratio: 1440 / 1024;
     overflow: hidden;
     border-radius: 1rem;
+    transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
 }
 
 .card-preview img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s ease;
+    transition: transform 0.8s ease;
 }
 
 /* Инфо-блок карточки */
@@ -501,21 +528,13 @@ li {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    padding: 0 1rem 1rem 1rem;
-}
-
-.card-tag {
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: var(--font-color-secondary);
 }
 
 .card-title {
     font-size: 2.2rem;
     font-weight: 700;
     margin: 0;
+    line-height: 100%;
 }
 
 .card-excerpt {
@@ -795,7 +814,7 @@ li {
 }
 
 ::-webkit-scrollbar-track {
-    background: #000; /* фон трека */
+    background: transparent; /* фон трека */
     border-radius: 2rem;
     margin: 1rem;
 }
@@ -943,7 +962,7 @@ li {
     max-width: 80rem;
     margin: 0 auto;
     display: flex;
-    gap: 2rem;
+    gap: 1.5rem;
     align-items: start;
 }
 
@@ -1037,6 +1056,7 @@ li {
     justify-content: center;
     padding: 1rem 2.2rem;
     width: fit-content;
+    height: fit-content;
     
     /* Стекло и форма */
     background: var(--btn-bg);

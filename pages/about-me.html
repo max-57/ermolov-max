@@ -46,9 +46,9 @@
 </div>
 
 <div class="experience">
-    <div class="experience-text">
+    <div class="experience-title">
         <h2>ОПЫТ РАБОТЫ</h2>
-        <h1 id="experience-counter">Загрузка...</h1>
+        <a id="experience-counter" style="font-size: 12rem; font-weight: bolder; color: var(--font-color-primary)">Загрузка...</a>
     </div>
     <div class="experience-text">
         
@@ -138,37 +138,57 @@
     </div>
 </div>
 
-<div class="education-wrapper">
-    <div class="education">
-        <h2>ОБРАЗОВАНИЕ</h2>
-        <a>Донской государственный технический университет 2023 — 2027</a>
-        <a>Бакалавр прикладной информатики (3 курс). Специализация: Прикладная информатика</a>
-    </div>
-</div>
-
 <section class="skills-dashboard">
     <div class="skills-container">
         
         <div class="skill-card tools-card">
-            <div class="card-header">
-                <span class="card-label">// DESIGN & STACK</span>
-                <h3 class="card-title">Инструментарий</h3>
-            </div>
-            <div class="tags-cloud">
+            <span class="card-label">// HARD SKILLS</span>
+
+            <div class="metric-item">
+                <div class="metric-info">
+                    <h3>Figma</h3>
+                    <span class="metric-value" id="val-code">0%</span>
+                </div>
+                <div class="progress-wrapper">
+                    <div class="progress-bar" data-target="99"></div>
+                </div>
                 <div class="tag-group">
-                    <span class="tag-category">Design</span>
-                    <span class="tag">Figma (Variables/Tokens)</span>
+                    <span class="tag">Variables</span>
+                    <span class="tag">Tokens</span>
                     <span class="tag">Design Systems</span>
                     <span class="tag">Prototyping</span>
                 </div>
+            </div>
+
+            <div class="metric-item">
+                <div class="metric-info">
+                    <h3>FrontEnd</h3>
+                    <span class="metric-value" id="val-code">0%</span>
+                </div>
+                <div class="progress-wrapper">
+                    <div class="progress-bar" data-target="40"></div>
+                </div>
                 <div class="tag-group">
-                    <span class="tag-category">Motion & 3D</span>
+                    <span class="tag">Этот сайт, как пример</span>
+                    <span class="tag">HTML</span>
+                    <span class="tag">CSS</span>
+                    <span class="tag">Vanila JS</span>
+                    <span class="tag">GIT</span>
+                </div>
+            </div>
+
+            <div class="metric-item">
+                <div class="metric-info">
+                    <h3>Дизайн</h3>
+                    <span class="metric-value" id="val-code">0%</span>
+                </div>
+                <div class="progress-wrapper">
+                    <div class="progress-bar" data-target="80"></div>
+                </div>
+                <div class="tag-group">
                     <span class="tag">Blender</span>
                     <span class="tag">DaVinci Resolve</span>
                     <span class="tag">After Effects</span>
-                </div>
-                <div class="tag-group">
-                    <span class="tag-category">Adobe</span>
                     <span class="tag">Photoshop</span>
                     <span class="tag">Illustrator</span>
                 </div>
@@ -176,37 +196,117 @@
         </div>
 
         <div class="skill-card metrics-card">
-            <div class="card-header">
-                <span class="card-label">// PERFORMANCE METRICS</span>
-                <h3 class="card-title">Код и Языки</h3>
-            </div>
+            <span class="card-label">// SOFT SKILLS</span>
             
-            <div class="metrics-list">
-                <div class="metric-item">
-                    <div class="metric-info">
-                        <span class="metric-name">Front-end (HTML/CSS/JS)</span>
-                        <span class="metric-value" id="val-code">0%</span>
-                    </div>
-                    <div class="progress-wrapper">
-                        <div class="progress-bar" data-target="85"></div>
-                    </div>
+            <div class="metric-item">
+                <div class="metric-info">
+                    <h3>English</h3>
+                    <span class="metric-value" id="val-code">0%</span>
                 </div>
-
-                <div class="metric-item">
-                    <div class="metric-info">
-                        <span class="metric-name">English (Proficient)</span>
-                        <span class="metric-value" id="val-lang">0%</span>
-                    </div>
-                    <div class="progress-wrapper">
-                        <div class="progress-bar" data-target="90"></div>
-                    </div>
+                <div class="progress-wrapper">
+                    <div class="progress-bar" data-target="60"></div>
                 </div>
-                
-                <div class="metric-footer">
-                    <p>+ Git, Webflow, Technical Prototyping</p>
+                <div class="tag-group">
+                    <span class="tag">Reading (Documentation)</span>
+                    <span class="tag">Listening (Advanced)</span>
+                    <span class="tag">Writing (Basic)</span>
+                    <span class="tag">Speaking (Elementary)</span>
                 </div>
             </div>
+
+            <div class="metric-item">
+                <div class="metric-info">
+                    <h3>Product Thinking</h3>
+                    <span class="metric-value" id="val-product">85%</span>
+                </div>
+                <div class="progress-wrapper">
+                    <div class="progress-bar" data-target="85"></div>
+                </div>
+                <div class="tag-group">
+                    <span class="tag">CJM</span>
+                    <span class="tag">User Research</span>
+                    <span class="tag">A/B Testing</span>
+                    <span class="tag">Competitor Analysis</span>
+                </div>
+            </div>
+
+            <div class="metric-item">
+                <div class="metric-info">
+                    <h3>Problem Solving</h3>
+                    <span class="metric-value" id="val-ps">80%</span>
+                </div>
+                <div class="progress-wrapper">
+                    <!-- data-target="80" подхватит твой JS для анимации полоски -->
+                    <div class="progress-bar" data-target="80"></div>
+                </div>
+                <div class="tag-group">
+                    <span class="tag">Critical Thinking</span>
+                    <span class="tag">Analytical Skills</span>
+                    <span class="tag">Adaptability</span>
+                    <span class="tag">Solution-Focused</span>
+                </div>
+            </div>
+
         </div>
 
     </div>
 </section>
+
+<div class="portfolio-preview">
+    <div class="portfolio-preview-header">
+        <h2>Мои работы</h2>
+        <a href="portfolio" class="btn" data-magnetic="true">
+            <span>Все работы</span>
+        </a>
+    </div>
+    <div class="projects-container">
+        <a href="fintech" class="project-card">
+            <div class="card-preview">
+                <img src="./images/fintech-case-cover.png" alt="Строительный Fintech">
+            </div>
+            <div class="card-content">
+                <span class="card-label">// FINTECH • ENTERPRISE</span>
+                <h2 class="card-title">Строительный Fintech</h2>
+                <p class="card-excerpt">Разработка ядра системы управления сметами с автоматизацией каскадных обновлений и сложной аналитикой.</p>
+            </div>
+        </a>
+
+        <a href="logistics" class="project-card">
+            <div class="card-preview">
+                <img src="./images/logistics-case-cover.png" alt="AI Logistics Optimizer">
+            </div>
+            <div class="card-content">
+                <span class="card-label">// AI • LOGISTICS • MOBILE</span>
+                <h2 class="card-title">AI Logistics Optimizer</h2>
+                <p class="card-excerpt">Мобильная система управления автопарком с AI-ассистентом для предиктивного анализа расходов и оптимизации закупок.</p>
+            </div>
+        </a>
+
+        <a href="quest-saas" class="project-card">
+            <div class="card-preview">
+                <img src="./images/quest-case-cover.png" alt="B2B SaaS для квестов">
+            </div>
+            <div class="card-content">
+                <span class="card-label">// B2B • SAAS • ENTERTAINMENT</span>
+                <h2 class="card-title">B2B SaaS для квестов</h2>
+                <p class="card-excerpt">Единый центр управления партнерской сетью игровых локаций, бронированиями и автоматизацией работы персонала.</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="education-wrapper">
+    <div class="education">
+        <a class="card-label">// ОБРАЗОВАНИЕ</a>
+        <h1>DSTU 2023 &bull; 2027</h1>
+        <a>Донской государственный технический университет</a>
+        <p>Бакалавр прикладной информатики (3 курс)</p>
+        <p class="specialization">Специализация: <span>Прикладная информатика</span></p>
+        <div class="tag-group">
+            <span class="tag">System Analysis</span>
+            <span class="tag">Discrete Math</span>
+            <span class="tag">Algorithms</span>
+            <span class="tag">Software Engineering</span>
+        </div>
+    </div>
+</div>
