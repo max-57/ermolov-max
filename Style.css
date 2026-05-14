@@ -1274,4 +1274,21 @@ li {
     h1 {
         font-size: 5rem;
     }
+
+    .about-me-image {
+        width: 100%;
+    }
+
+    .education {
+        padding-bottom: 24rem;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .project-grid-content {
+        display: flex;
+        flex-direction: column;
+    }
 }
