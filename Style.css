@@ -309,7 +309,7 @@ li {
     bottom: 0;
     
     /* Переносим сюда настройки фона */
-    background-image: url("/images/DSTU.png");
+    background-image: url("/images/dstu.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center bottom;
