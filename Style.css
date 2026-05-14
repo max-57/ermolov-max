@@ -25,6 +25,10 @@
     --bg-blob-3: #0a2341;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: "Google Sans Flex", sans-serif;
     color: var(--font-color-primary);
@@ -183,6 +187,7 @@ li {
 .logo-main {
     /* Геометрия */
     width: 33%;
+    max-width: 24rem;
     height: auto;
     aspect-ratio: 1 / 1;
     
@@ -213,7 +218,6 @@ li {
 }
 
 .about-me-line {
-    
     width: 120%;
     padding-bottom: 6rem;
     overflow:hidden;
@@ -243,16 +247,18 @@ li {
 .about-me {
     display:flex;
     flex-direction: row;
-    padding: 0 1rem 0 1rem;
+    padding: 0 1rem;
     margin-left: auto;
     margin-right: auto;
     height: 100%;
     max-width: 80rem;
     transform: rotate(-5deg);
+    box-sizing: border-box;
 }
 
 .about-me-text {
     width: 50%;
+    box-sizing: border-box;
 }
 
 .about-me-image {
@@ -352,6 +358,7 @@ li {
 
 .skills-dashboard {
     width: 100%;
+    box-sizing: border-box;
 }
 
 .skills-container {
@@ -362,6 +369,7 @@ li {
     margin-left: auto;
     margin-right: auto;
     max-width: 80rem;
+    box-sizing: border-box;
 }
 
 .skill-card {
@@ -374,6 +382,7 @@ li {
     display:flex;
     flex-direction: column;
     gap: 1rem;
+    box-sizing: border-box;
 }
 
 .card-label {
@@ -478,6 +487,7 @@ li {
     margin-left: auto;
     margin-right: auto;
     max-width: 80rem;
+    box-sizing: border-box;
 }
 
 /* Компонент карточки */
@@ -666,6 +676,7 @@ li {
     background-color: var(--background-primary);
     transition: transform 0.3s ease-in-out;
     border-bottom: 1px solid var(--menu-border-color);
+    box-sizing: border-box;
 }
 
 /* Класс для скрытия при скролле (через JS) */
@@ -679,7 +690,7 @@ li {
     width: 100%; /* Чтобы контейнер занимал всю доступную ширину до 80rem */
     margin-left: auto;
     margin-right: auto;
-    padding: 1rem 0;
+    padding: 1rem;
     box-sizing: border-box; /* Чтобы padding не увеличивал ширину сверх 80rem */
     
     display: flex;
@@ -1161,15 +1172,75 @@ li {
    Адаптация
 ============================================ */
 
+@media (max-width: 1180px) {
+    .First-section {
+        flex-direction: column;
+    }
+
+    .logo-main {
+        align-self: center;
+    }
+
+    .First-section h1 {
+        text-align: center;
+    }
+
+    .header {
+        width: 100%;
+        align-items: center;
+    }
+
+}
 
 @media (max-width: 1090px) {
     h1 {
-        font-size: 6rem;
+        font-size: 8rem;
     }
 
-    .project-grid-content {
-        grid-template-columns: 1fr;
-        gap: 3rem;
+    .logo-main {
+        width: 60%;
+        align-self: center;
+    }
+
+    .about-me-line {
+        width: 120%;
+    }
+
+    .about-me {
+        width: 100dvw;
+        padding: 0 1rem 0 0;
+    }
+
+    .about-me-text {
+        padding: 0 1rem;
+    }
+
+    .about-me-image {
+        height: 18rem;
+    }
+
+    .portfolio-preview {
+        width: 100%;
+    }
+
+    .projects-container {
+        display:flex;
+        width: 100%;
+        flex-direction: row;
+        gap: 1rem;
+        overflow-x: auto;
+    }
+
+    .projects-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .project-card {
+        width: 900px !important;
+    }
+
+    .skills-container {
+        gap: 1rem;
     }
     
     .project-details-accordion {
@@ -1186,7 +1257,13 @@ li {
         flex-direction: column;
     }
 
-    .header, .about-me-text, .about-me-image, .experience-text {
+    .header, .about-me-text, .about-me-image, .experience-text, .experience-title {
         width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+   .portfolio-preview-header {
+        flex-direction: column;
     }
 }
