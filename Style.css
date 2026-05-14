@@ -497,6 +497,22 @@ li {
     box-sizing: border-box;
 }
 
+.projects-container-preview {
+    display: grid;
+    /* Создаем 3 колонки равной ширины (1fr) */
+    grid-template-columns: repeat(3, 1fr); 
+    /* Высота строк подстраивается под самый высокий элемент в ряду */
+    grid-auto-rows: auto; 
+    /* Расстояние между карточками */
+    gap: 1.5rem; 
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem 0 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 80rem;
+}
+
 /* Компонент карточки */
 .project-card {
     display: flex;
@@ -1228,7 +1244,7 @@ li {
         width: 100%;
     }
 
-    .projects-container {
+    .projects-container-preview {
         display:flex;
         width: 100%;
         flex-direction: row;
@@ -1237,7 +1253,7 @@ li {
         padding: 1rem;
     }
 
-    .projects-container::-webkit-scrollbar {
+    .projects-container-preview::-webkit-scrollbar {
         display: none;
     }
 
@@ -1271,12 +1287,20 @@ li {
 }
 
 @media (max-width: 485px) {
+    ::-webkit-scrollbar {
+        display: none;
+    }
+
     h1 {
         font-size: 4rem;
     }
 
     h2 {
         font-size: 2.5rem;
+    }
+
+    .logo-main {
+        width: 80%;
     }
 
     .about-me-text {
@@ -1311,6 +1335,6 @@ li {
     }
 
     .bg-mesh {
-        filter: blur(80px);
+        filter: blur(120px);
     }
 }
