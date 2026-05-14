@@ -1304,4 +1304,13 @@ li {
     .project-card {
         width: 100%;
     }
+
+    .blob {
+        width: 75vw;
+        height: 75vw;
+    }
+
+    .bg-mesh {
+        filter: blur(80px);
+    }
 }
