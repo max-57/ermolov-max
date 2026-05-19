@@ -450,18 +450,31 @@ function initMagneticButtons() {
     });
 }
 
-const lenis = new Lenis({
-  duration: 1.2,
-  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Функция плавности
-  direction: 'vertical',
-  gestureDirection: 'vertical',
-  smoothHover: true,
-  smoothWheel: true,
+
+
+//=======================================================
+// Анимация загрузки
+//=========================================================
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Просто запускаем анимацию
+    lottie.loadAnimation({
+        container: document.getElementById('lottie-logo'),
+        renderer: 'svg',
+        loop: false,
+        autoplay: true,
+        path: './Logo_animation.json',
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+        }
+    });
+
+    // 2. Ровно через 3.63 секунды полностью удаляем прелоадер из кода
+    setTimeout(() => {
+        const preloader = document.getElementById('preloader');
+        if (preloader) {
+            preloader.remove(); // Намертво удаляет блок, сайт сразу кликабелен
+        }
+    }, 3630); 
 });
-
-function raf(time) {
-  lenis.raf(time);
-  requestAnimationFrame(raf);
-}
-
-requestAnimationFrame(raf);
