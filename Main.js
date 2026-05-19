@@ -2,6 +2,25 @@
 //  Меню и переходы
 //=========================================================
 
+// Получить текущий язык (по умолчанию 'ru')
+function getCurrentLang() {
+    return localStorage.getItem('preferred_lang') || 'ru';
+}
+
+// Переключить язык и обновить интерфейс
+function toggleLanguage() {
+    const newLang = getCurrentLang() === 'ru' ? 'en' : 'ru';
+    localStorage.setItem('preferred_lang', newLang);
+    
+    // Перерисовываем шапку на новом языке
+    initNavbar();
+    
+    // Перезагружаем текущую страницу из соответствующей папки языка
+    const currentPage = window.location.hash.replace('#', '') || 'about-me';
+    navigate(currentPage);
+}
+
+
 // --- ФУНКЦИЯ SPA НАВИГАЦИИ ---
 async function navigate(pageId) {
     const contentArea = document.querySelector('.content');
@@ -11,18 +30,37 @@ async function navigate(pageId) {
 
     setTimeout(async () => {
         try {
-            const response = await fetch(`./pages/${pageId}.html`);
+            const lang = getCurrentLang();
+            const response = await fetch(`./pages/${lang}/${pageId}.html`);
             if (!response.ok) throw new Error('Ошибка загрузки');
             const html = await response.text();
 
+            // 1. Вставляем новый контент в DOM
             contentArea.innerHTML = html;
+            // Даем браузеру микропаузу, чтобы он успел вдуплить новый HTML и посчитать высоту страницы
+            requestAnimationFrame(() => {
+                document.body.scrollTop = 0;                  // Обнуляем тег <body>
+                
+                // И только теперь сбрасываем переменную для нашего обработчика скролла шапки
+                lastScrollTop = 0;
+                
+                // Если у тебя на шапке висел класс скрытия, принудительно убираем его при переходе
+                const nav = document.querySelector('.navbar-frame') || document.querySelector('.navbar');
+                if (nav) nav.classList.remove('hidden');
+            });
 
-            // Находим все части навигации
+            initAccordion();         // Перезапуск аккордеона
+            initExperienceCounter(); // Перезапуск счетчика стажа
+            initMarquee();           // Перезапуск бесконечной бегущей строки
+            initSkillsAnimation();   // Перезапуск анимации прогресс-баров
+            initMagneticButtons();   // Навешиваем магнитный эффект на новые кнопки/карточки
+            updateBackground(pageId);// Переключаем цветовую палитру фона под текущую страницу
+            // ==========================================================================
+
             const menuBox = document.getElementById('menu-container');
             const logoBox = document.getElementById('logo-container');
             const actionsBox = document.getElementById('actions-container');
 
-            // Проверяем, является ли страница стандартной (из MenuData.js)
             const isStandardPage = navbarConfig.menu.some(item => item.link === pageId) || pageId === 'about-me';
             
             if (menuBox) {
@@ -30,68 +68,37 @@ async function navigate(pageId) {
                     // РЕЖИМ ПРОЕКТА
                     if (logoBox) logoBox.style.display = 'none';
                     if (actionsBox) actionsBox.style.display = 'none';
-                    
-                    // Перезаписываем всё меню, так как структура меняется полностью
-                    menuBox.innerHTML = `
-                        <li class="nav-item">
-                            <a href="portfolio" class="nav-back">
-                                <img src="./images/arrow.svg" style="transform: rotate(90deg); width: 1.5rem;" alt="Back">
-                                <span>Назад</span>
-                            </a>
-                        </li>
-                    `;
+                    // ... твой код кастомного меню для проектов
                 } else {
-                    // СТАНДАРТНЫЙ РЕЖИМ
-                    if (logoBox) logoBox.style.display = 'block';
+                    // СТАНДАРТНАЯ СТРАНИЦА (Обычное меню)
+                    if (logoBox) logoBox.style.display = 'flex';
                     if (actionsBox) actionsBox.style.display = 'flex';
-
-                    // КРИТИЧЕСКИЙ МОМЕНТ:
-                    // Проверяем, есть ли уже ссылки. Если есть, обновляем только класс active.
-                    // Если нет (вернулись из проекта), рисуем структуру заново.
-                    const hasLinks = menuBox.querySelector('a:not(.nav-back)');
                     
-                    if (hasLinks) {
-                        // Линия уже существует в DOM, просто обновляем классы у ссылок
-                        const links = menuBox.querySelectorAll('a');
-                        links.forEach(link => {
-                            if (link.getAttribute('href') === pageId) link.classList.add('active');
-                            else link.classList.remove('active');
-                        });
+                    // Если мы вернулись из проекта и меню было стёрто — пересобираем его
+                    if (!menuBox.querySelector('.nav-menu-pill')) {
+                        initNavbar();
                     } else {
-                        // Мы вернулись со страницы проекта, нужно восстановить структуру
-                        menuBox.innerHTML = `
-                            ${navbarConfig.menu.map(item => `
-                                <li><a href="${item.link}" class="${item.link === pageId ? 'active' : ''}">${item.title}</a></li>
-                            `).join('')}
-                            <div class="nav-underline" id="underline"></div>
-                        `;
+                        // ЖИВОЙ ПЕРЕКЛЮЧАТЕЛЬ КЛАССА ACTIVE:
+                        const links = menuBox.querySelectorAll('.nav-pill-item');
+                        links.forEach(link => {
+                            const linkPage = link.getAttribute('href').replace('#', '');
+                            
+                            if (linkPage === pageId) {
+                                link.classList.add('active');
+                            } else {
+                                link.classList.remove('active');
+                            }
+                        });
                     }
-                    
-                    // Запускаем расчет позиции линии
-                    setTimeout(setupUnderline, 10);
                 }
             }
 
-            initAccordion();
-            initExperienceCounter();
-            initMarquee();
-            initSkillsAnimation();
-            initMagneticButtons();
-
-
-            document.body.dataset.page = pageId; // Можно использовать для специфических стилей
-            updateBackground(pageId);
-
-
             contentArea.style.opacity = '1';
-            updateActiveState(pageId);
             
-        } catch (err) {
-            console.error(err);
-            contentArea.innerHTML = '<h2>Страница не найдена</h2>';
-            contentArea.style.opacity = '1';
+        } catch (error) {
+            console.error(error);
         }
-    }, 500);
+    }, 150);
 }
 
 
@@ -119,78 +126,77 @@ function updateActiveState(pageId) {
     });
 }
 
-// --- ТВОЯ ОТРИСОВКА NAVBAR ---
+document.getElementById('menu-pill').addEventListener('click', (e) => {
+    const link = e.target.closest('.nav-pill-item');
+    if (!link) return;
+
+    // Снимаем со всех
+    document.querySelectorAll('.nav-pill-item').forEach(el => el.classList.remove('active'));
+    // Вешаем на того, по кому кликнули
+    link.classList.add('active');
+});
+
+// --- ОТРИСОВКА NAVBAR ---
 function initNavbar() {
-    const logoBox = document.getElementById('logo-container');
-    const menuBox = document.getElementById('menu-container');
-    const actionsBox = document.getElementById('actions-container');
+    const lang = getCurrentLang();
+    const currentHash = window.location.hash.replace('#', '') || 'about-me';
 
-    if (logoBox) {
-        logoBox.innerHTML = `
-            <a class="logo" data-link>
-                <img src="${navbarConfig.logo.src}" alt="${navbarConfig.logo.alt}" class="logo-img">
-            </a>`;
+    // 1. Наполняем логотип (вставляем <img> внутрь твоего <div>)
+    const logoContainer = document.getElementById('logo-link');
+    if (logoContainer) {
+        logoContainer.innerHTML = `<img src="${navbarConfig.logo.src}" alt="${navbarConfig.logo.alt}" class="logo-img">`;
     }
 
-    if (menuBox) {
-        // Определяем начальную страницу из URL (хэша) или ставим main
-        const initialPage = window.location.hash.replace('#', '') || 'about-me';
-        
-        menuBox.innerHTML = `
-            ${navbarConfig.menu.map(item => `
-                <li><a href="${item.link}" class="${item.link === initialPage ? 'active' : ''}">${item.title}</a></li>
-            `).join('')}
-            <div class="nav-underline" id="underline"></div>
-        `;
+    // 2. Рендерим пункты меню в #menu-pill
+    const menuPill = document.getElementById('menu-pill');
+    if (menuPill) {
+        menuPill.innerHTML = navbarConfig.menu.map(item => {
+            const isActive = item.link === currentHash;
+            return `<a href="#${item.link}" class="nav-pill-item ${isActive ? 'active' : ''}">${item.title[lang]}</a>`;
+        }).join('');
     }
 
-    if (actionsBox) {
-        actionsBox.innerHTML = `
-            <div class="social-icons">
-                ${navbarConfig.socials.map(s => `
-                    <a href="${s.link}" class="social-link" target="_blank">
-                        <img src="${s.img}" alt="${s.name}">
-                    </a>`).join('')}
-            </div>
-            <button class="switcher-btn"><span class="switcher-icon"></span></button>
-        `;
+    // 3. Рендерим соцсети в #social-icons
+    const socialIcons = document.getElementById('social-icons');
+    if (socialIcons) {
+        socialIcons.innerHTML = navbarConfig.socials.map(s => `
+            <a href="${s.link}" class="social-link" target="_blank">
+                <img src="${s.img}" alt="${s.name}" class="nav-icon">
+            </a>
+        `).join('');
     }
 
-    setTimeout(setupUnderline, 100);
-    initSPA(); // Запускаем перехват кликов
-}
-
-function setupUnderline() {
-    const menu = document.getElementById('menu-container');
-    const underline = document.getElementById('underline');
-    const links = document.querySelectorAll('.nav-links a');
-    
-    if (!menu || !underline) return;
-
-    const moveLine = (element) => {
-        if (!element) return;
-        const rect = element.getBoundingClientRect();
-        
-        // Вычисляем позицию относительно контейнера меню
-        underline.style.width = `${rect.width}px`;
-        underline.style.left = `${rect.left}px`;
-        underline.style.opacity = "1";
-    };
-
-    // Линия встает под активный пункт только при загрузке или смене страницы
-    const activeLink = document.querySelector('.nav-links a.active');
-    if (activeLink) {
-        moveLine(activeLink);
-    } else {
-        underline.style.opacity = "0";
+    // 4. Рендерим флаги в #lang-switcher
+    const langSwitcher = document.getElementById('lang-switcher');
+    if (langSwitcher) {
+        langSwitcher.innerHTML = navbarConfig.langswitcher.map(item => {
+            const isActive = item.flag === lang;
+            return `
+                <div class="lang-flag-wrapper ${isActive ? 'active' : ''}" data-lang="${item.flag}">
+                    <img src="${item.img}" alt="${item.flag}" class="flag-img">
+                </div>
+            `;
+        }).join('');
     }
 
-    // Слушатели для наведения больше не двигают линию!
-    // Мы только гарантируем, что она вернется к активному пункту, если что-то пошло не так
-    menu.addEventListener('mouseleave', () => {
-        const currentActive = document.querySelector('.nav-links a.active');
-        if (currentActive) moveLine(currentActive);
-    });
+    // 5. Обработчик свитчера языков
+    const switcherBtn = document.getElementById('lang-switcher');
+    if (switcherBtn && !switcherBtn.dataset.listenerReady) {
+        switcherBtn.addEventListener('click', (e) => {
+            const clickedFlag = e.target.closest('.lang-flag-wrapper');
+            if (!clickedFlag || clickedFlag.classList.contains('active')) {
+                e.preventDefault();
+                return;
+            }
+            toggleLanguage(e); 
+        });
+        switcherBtn.dataset.listenerReady = "true";
+    }
+
+    if (!window.spaInitialized) {
+        initSPA();
+        window.spaInitialized = true;
+    }
 }
 
 function initSPA() {
@@ -217,14 +223,31 @@ function initSPA() {
 }
 
 // Логика скролла
+
 let lastScrollTop = 0;
-window.addEventListener('scroll', () => {
-    const nav = document.querySelector('.navbar');
-    let st = window.pageYOffset || document.documentElement.scrollTop;
-    if (st > lastScrollTop && st > 100) nav.classList.add('navbar--hidden');
-    else nav.classList.remove('navbar--hidden');
+
+// Добавляем TRUE в самый конец (включаем режим перехвата), 
+// чтобы window слышал скролл даже внутри твоего .content
+window.addEventListener('scroll', (e) => {
+    const nav = document.querySelector('.navbar-frame');
+    const bg = document.querySelector('.navbar-bg');
+    if (!nav) return;
+
+    // Магическая строчка: берём скролл именно с того элемента, который СЕЙЧАС крутится
+    let target = e.target === document ? (document.documentElement || document.body) : e.target;
+    let st = target.scrollTop;
+
+    // Твоя родная рабочая логика
+    if (st > lastScrollTop && st > 100) {
+        nav.classList.add('hidden');
+        bg.classList.add('hidden');
+    } else {
+        nav.classList.remove('hidden');
+        bg.classList.remove('hidden');
+    }
+
     lastScrollTop = st <= 0 ? 0 : st;
-});
+}, true); // <- СУПЕР-ВАЖНО: эта true заставляет window ловить внутренний скролл!
 
 document.addEventListener('DOMContentLoaded', initNavbar);
 
@@ -257,48 +280,70 @@ function initExperienceCounter() {
     const counterElement = document.getElementById('experience-counter');
     if (!counterElement) return;
 
+    // 1. Твоя исходная логика расчёта даты стажа
     const startDate = new Date('2021-06-17');
-    const today = new Date();
     const subtractDays = 365;
-
-    // Вычитаем 380 дней из стажа (переводим дни в миллисекунды)
-    // 380 дней * 24 часа * 60 минут * 60 секунд * 1000 мс
     const adjustedStartDate = new Date(startDate.getTime() + (subtractDays * 24 * 60 * 60 * 1000));
+    
+    const now = new Date();
+    let targetYears = now.getFullYear() - adjustedStartDate.getFullYear();
+    let targetMonths = now.getMonth() - adjustedStartDate.getMonth();
 
-    function updateCounter() {
-        const now = new Date();
-        let years = now.getFullYear() - adjustedStartDate.getFullYear();
-        let months = now.getMonth() - adjustedStartDate.getMonth();
-
-        // Корректировка, если текущий месяц меньше месяца начала
-        if (months < 0 || (months === 0 && now.getDate() < adjustedStartDate.getDate())) {
-            years--;
-            months += 12;
-        }
-
-        // Склонение слов
-        const yearText = getNoun(years, '.', '.', '.');
-        const monthText = getNoun(months, '', '', '');
-
-        let result = '';
-        if (years > 0) result += `${years}${yearText}`;
-        if (months > 0) result += `${months}${monthText}`;
-
-        counterElement.textContent = result || 'Менее месяца';
+    if (targetMonths < 0 || (targetMonths === 0 && now.getDate() < adjustedStartDate.getDate())) {
+        targetYears--;
+        targetMonths += 12;
     }
 
-    // Вспомогательная функция для склонения
-    function getNoun(number, one, two, five) {
-        let n = Math.abs(number);
-        n %= 100;
-        if (n >= 5 && n <= 20) return five;
-        n %= 10;
-        if (n === 1) return one;
-        if (n >= 2 && n <= 4) return two;
-        return five;
-    }
+    // Переводим всё в единый массив месяцев для правильного таймлайна анимации
+    const totalTargetMonths = (targetYears * 12) + targetMonths;
 
-    updateCounter();
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            // Защита от наложения кадров при быстром скролле
+            if (counterElement.dataset.rafId) {
+                cancelAnimationFrame(parseInt(counterElement.dataset.rafId));
+            }
+
+            if (entry.isIntersecting) {
+                const duration = 2500; // Длительность анимации в мс (под стать полоскам прогресса)
+                const startTime = performance.now();
+
+                const animate = (currentTime) => {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // Эффект плавного замедления (Ease-Out Cubic)
+                    const easeProgress = 1 - Math.pow(1 - progress, 3);
+                    
+                    // Вычисляем текущую точку на таймлайне месяцев
+                    const currentTotalMonths = easeProgress * totalTargetMonths;
+                    const displayYears = Math.floor(currentTotalMonths / 12);
+                    const displayMonths = Math.floor(currentTotalMonths % 12);
+
+                    // Форматируем вывод по маске [Число].[00-12]
+                    const formattedMonths = String(displayMonths).padStart(2, '0');
+                    counterElement.textContent = `${displayYears}.${formattedMonths}`;
+
+                    if (progress < 1) {
+                        counterElement.dataset.rafId = requestAnimationFrame(animate);
+                    } else {
+                        // Жестко фиксируем финальное значение на последнем кадре
+                        const finalMonths = String(targetMonths).padStart(2, '0');
+                        counterElement.textContent = `${targetYears}.${finalMonths}`;
+                    }
+                };
+
+                counterElement.dataset.rafId = requestAnimationFrame(animate);
+            } else {
+                // Сбрасываем состояние в дефолт, когда элемент уходит из вьюпорта
+                counterElement.textContent = '0.00';
+            }
+        });
+    }, {
+        threshold: 0.1 // Запуск анимации, когда край элемента показался на экране
+    });
+
+    observer.observe(counterElement);
 }
 
 
@@ -329,32 +374,59 @@ function initMarquee() {
 
 
 function initSkillsAnimation() {
-    const bars = document.querySelectorAll('.progress-bar');
-    
-    bars.forEach(bar => {
-        const target = bar.getAttribute('data-target');
-        const valueDisplay = bar.closest('.metric-item').querySelector('.metric-value');
-        
-        // Анимируем ширину
-        setTimeout(() => {
-            bar.style.width = target + '%';
-        }, 300);
+    const progressBars = document.querySelectorAll('.progress-bar');
+    if (!progressBars.length) return;
 
-        // Анимируем цифры
-        let start = 0;
-        const duration = 2000; // 2 секунды
-        const increment = target / (duration / 16);
-        
-        const count = () => {
-            start += increment;
-            if (start < target) {
-                valueDisplay.textContent = Math.round(start) + '%';
-                requestAnimationFrame(count);
-            } else {
-                valueDisplay.textContent = target + '%';
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const bar = entry.target;
+            const target = parseInt(bar.getAttribute('data-target')) || 0;
+            const metricItem = bar.closest('.metric-item');
+            const valueDisplay = metricItem ? metricItem.querySelector('.metric-value') : null;
+            
+            // Очищаем предыдущую анимацию цифр, если она еще крутится (защита от багов при быстром скролле)
+            if (bar.dataset.rafId) {
+                cancelAnimationFrame(parseInt(bar.dataset.rafId));
             }
-        };
-        count();
+
+            if (entry.isIntersecting) {
+                // 1. Анимируем ширину полосы
+                bar.style.width = `${target}%`;
+
+                // 2. Твоя анимация цифр через requestAnimationFrame
+                if (valueDisplay) {
+                    let start = 0;
+                    const duration = 1500; // Сделаем чуть динамичнее — 1.5 сек, под стать кубику безье
+                    const increment = target / (duration / 16);
+                    
+                    const count = () => {
+                        start += increment;
+                        if (start < target) {
+                            valueDisplay.textContent = Math.round(start) + '%';
+                            bar.dataset.rafId = requestAnimationFrame(count);
+                        } else {
+                            valueDisplay.textContent = target + '%';
+                        }
+                    };
+                    bar.dataset.rafId = requestAnimationFrame(count);
+                }
+            } else {
+                // Полный сброс состояния, когда элемент уходит из вьюпорта
+                bar.style.width = '0%';
+                if (valueDisplay) {
+                    valueDisplay.textContent = '0%';
+                }
+            }
+        });
+    }, {
+        threshold: 0.1 // Срабатывает, когда 10% карточки показалось на экране
+    });
+
+    progressBars.forEach(bar => {
+        // Задаем физику плавности для самой полоски прямо из JS
+        bar.style.width = '0%';
+        bar.style.transition = 'width 1.5s cubic-bezier(0.25, 1, 0.5, 1)';
+        observer.observe(bar);
     });
 }
 

@@ -116,6 +116,7 @@ body {
     gap: 4rem;
     transition: opacity 300ms ease-in-out;
     align-items: center;
+    min-height: 90dvh;
 }
 
 .content-wrapper {
@@ -177,6 +178,7 @@ li {
     margin-left: auto;
     margin-right: auto;
     height: 100%;
+    min-height: 90dvh;
     max-width: 80rem;
 }
 
@@ -193,14 +195,9 @@ li {
     /* Геометрия */
     width: 33%;
     max-width: 24rem;
-    height: auto;
+    
     aspect-ratio: 1 / 1;
-    
-    /* Внутренние отступы */
-    padding: 2rem;
-    
-    /* Поведение картинки внутри контейнера */
-    object-fit: cover;
+    padding: 1rem;
     
     /* Добавим щепотку стиля из макета */
     display: block; /* Убирает лишние зазоры снизу */
@@ -281,6 +278,8 @@ li {
     margin-left: auto;
     margin-right: auto;
     height: 100%;
+    min-height: 90dvh;
+    align-items: center;
     max-width: 80rem;
 }
 
@@ -365,6 +364,8 @@ li {
 
 .skills-dashboard {
     width: 100%;
+    min-height: 90dvh;
+    align-items: center;
     box-sizing: border-box;
 }
 
@@ -464,6 +465,8 @@ li {
     display:flex;
     flex-direction: column;
     gap: 1rem;
+    min-height: 90dvh;
+    align-items: center;
 }
 
 .portfolio-preview-header {
@@ -471,6 +474,7 @@ li {
     flex-direction: row;
     justify-content: space-between;
     max-width: 80rem;
+    width: 100%;
     padding: 0 1rem 0 1rem;
 }
 
@@ -690,148 +694,149 @@ li {
 ============================================ */
 
 
-/* Основная панель навигации */
-.navbar {
+/* ==========================================================================
+   Компоненты навигации (Rem + Переменные Системы)
+   ========================================================================== */
+
+/* Главный фрейм */
+.navbar-frame {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 0.75rem;
+    background-color: var(--background-card);
+    border: 0.0625rem solid var(--border-card);
+    border-radius: 999rem;
+    
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 1000;
-    background-color: var(--background-primary);
-    transition: transform 0.3s ease-in-out;
-    border-bottom: 1px solid var(--menu-border-color);
-    box-sizing: border-box;
+    backdrop-filter: blur(20px);
+    transition: transform 0.3s ease;
 }
 
-/* Класс для скрытия при скролле (через JS) */
-.navbar--hidden {
-    transform: translateY(-100%);
-}
-
-/* Ограничивающий контейнер внутри навигации */
-.nav-container {
-    max-width: 80rem;
-    width: 100%; /* Чтобы контейнер занимал всю доступную ширину до 80rem */
-    margin-left: auto;
-    margin-right: auto;
-    padding: 1rem;
-    box-sizing: border-box; /* Чтобы padding не увеличивал ширину сверх 80rem */
-    
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between; /* Распределяем: Лого слева, Линки в центре, Акшены справа */
-    gap: 1rem;
-}
-
-/* Стилизация Логотипа */
+/* Логотип-див */
 .logo {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    text-decoration: none;
-    flex-shrink: 0; /* Чтобы логотип не сжимался */
-    
+    pointer-events: none !important;
 }
 
-.logo-img {
-    height: 2rem;
-    width: auto;
-    display: block;
-    /* transition для плавного ховера */
-    transition: opacity 0.3s ease;
-}
-
-/* Список ссылок (меню) */
-.nav-links {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    gap: 1.5rem; /* Расстояние между пунктами меню */
-    flex-grow: 1; /* Позволяет меню занимать свободное пространство */
-    justify-content:left;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: var(--nav-links);
-    font-weight: 500;
-    font-size: 1rem;
-    transition: color 0.3s ease;
-    white-space: nowrap; /* Чтобы пункты не переносились на новую строку */
-}
-
-.nav-links a:hover {
-    color: var(--nav-links-hover);
-}
-
-.nav-links a.active {
-    color: var(--nav-links-hover) !important; /* Или любой другой яркий цвет */
-    font-weight: 600; /* Делаем чуть жирнее для акцента */
-    transition: all 0.3s ease;
-}
-
-/* Правая часть: Иконки и Свитчер */
-.nav-actions {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    flex-shrink: 0; /* Чтобы блок не сжимался */
-}
-
-.nav-underline {
-    position: absolute;
-    bottom: 0.75rem; /* На сколько ниже текста будет линия */
-    left: 0;
-    height: 2px;
-    background-color: var(--nav-links-hover); /* Цвет линии */
-    transition: all 0.3s ease-in-out; /* Плавность перемещения */
-    pointer-events: none; /* Чтобы линия не мешала кликать */
-    width: 0; /* Изначально ширина 0 */
-}
-
+/* Внутренние блоки */
 .social-icons {
     display: flex;
     gap: 1rem;
 }
 
-.social-link img {
+.nav-menu-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--background-card);
+    border-radius: 99rem;
+}
+
+/* Ссылки, ховеры и защита мыши */
+.social-link, .lang-flag-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer !important;
+    transition: transform 0.2s ease-in-out;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.social-link img, .lang-flag-wrapper img, .logo img {
+    pointer-events: none; 
+}
+
+.social-link:hover, .lang-flag-wrapper:not(.active):hover {
+    transform: scale(1.15);
+}
+
+.nav-icon, .logo-img {
+    width: 1.75rem;
+    height: 1.75rem;
+    aspect-ratio: 1 / 1;
+    display: block;
+    object-fit: contain;
+}
+
+.nav-pill-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.375rem 1.125rem;
+    border-radius: 9.281rem;
+    color: var(--font-color-primary);
+    font-size: 1rem;
+    height: 2.125rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.nav-pill-item.active {
+    color: #000000 !important;
+    background-color: var(--font-color-primary) !important;
+}
+
+.nav-pill-item:hover {
+    background-color: var(--background-card);
+}
+
+/* Языковой блок */
+.lang-switcher-pill {
+    display: inline-flex;
+    height: 2rem;
+    background-color: var(--background-card);
+    align-items: center;
+    border-radius: 9.281rem;
+    box-shadow: 0 0.5rem 2.5rem rgba(0, 0, 0, 0.5);
+}
+
+.lang-flag-wrapper {
+    align-self: stretch;
+    border-radius: 999rem;
+    aspect-ratio: 1 / 1;
+    border: 0.1rem solid transparent;
+    box-sizing: border-box;
+    padding: 0.2rem;
+}
+
+.flag-img {
+    display: block;
     width: 1.5rem;
     height: 1.5rem;
-    display: block;
-    transition: opacity 0.3s;
-    border-radius: 9rem;
+    border-radius: 50%;
+    overflow: hidden;
+    object-fit: cover;
 }
 
-.social-link {
-    border-radius: 9rem;
-    transition: all 0.3s ease-in-out;
+.lang-flag-wrapper.active {
+    border-color: var(--font-color-primary);
+    cursor: default !important;
+    pointer-events: none !important;
 }
 
-.social-link:hover {
-    outline: 0.1rem solid var(--font-color-secondary);
-    /* Если нужно, чтобы рамка была чуть дальше от иконки */
-    outline-offset: 0.1rem;
-}
-
-.nav-back {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    text-decoration: none;
-    color: var(--font-color-primary);
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    font-size: 0.9rem; /* Чтобы соответствовало твоему капсу */
-}
-
-.nav-back img {
+.navbar-bg {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 10rem;
+    background: linear-gradient(to bottom, var(--background-primary) 0%, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0) 100%);
+    z-index: 999;
+    pointer-events: none; 
     transition: transform 0.3s ease;
 }
 
-/* При наведении стрелка чуть "отпрыгивает" вверх/назад */
-.nav-back:hover img {
-    transform: rotate(90deg) translateY(3px) !important;
+.hidden {
+    transform: translate(-50%, -150%);
 }
 
 /* ============================================
