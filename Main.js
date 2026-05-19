@@ -468,56 +468,36 @@ function updateBackground(pageId) {
 
 
 function initMagneticButtons() {
-    // Ищем все кнопки с включенным магнетизмом
-    const buttons = document.querySelectorAll('.btn');
-    const tags = document.querySelectorAll('.tag');
-    const projects = document.querySelectorAll('.project-card');
-    
-    buttons.forEach(btn => {
-        btn.addEventListener('mousemove', (e) => {
-            const rect = btn.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            
-            // Двигаем кнопку на 30% от отклонения курсора
-            btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+    // Собираем все элементы в один массив для обработки
+    const targets = document.querySelectorAll('.btn, .tag, .project-card, .logo-main');
+
+    targets.forEach(el => {
+        // Определяем коэффициент силы для каждого типа элемента
+        let strength = 0.3; // дефолт для .btn
+        if (el.classList.contains('tag')) strength = 0.25;
+        if (el.classList.contains('project-card')) strength = 0.05;
+        if (el.classList.contains('logo-main')) strength = 0.5;
+
+        el.addEventListener('mousemove', (e) => {
+            const rect = el.getBoundingClientRect();
+            // Считаем центр
+            let x = (e.clientX - rect.left - rect.width / 2) * strength;
+            let y = (e.clientY - rect.top - rect.height / 2) * strength;
+
+            // Ограничиваем сдвиг в 16px (Math.min(val, 16) и Math.max(val, -16))
+            x = Math.max(-14, Math.min(14, x));
+            y = Math.max(-14, Math.min(14, y));
+
+            // Добавляем наклон (tilt): 
+            // чем дальше от центра, тем сильнее наклон (в градусах)
+            const rotateX = -y * 1; 
+            const rotateY = x * 1;
+
+            el.style.transform = `translate(${x}px, ${y}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
         });
 
-        btn.addEventListener('mouseleave', () => {
-            // Возвращаем в центр
-            btn.style.transform = `translate(0px, 0px)`;
-        });
-    });
-
-    tags.forEach(btn => {
-        btn.addEventListener('mousemove', (e) => {
-            const rect = btn.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            
-            // Двигаем кнопку на 30% от отклонения курсора
-            btn.style.transform = `translate(${x * 0.1}px, ${y * 0.4}px)`;
-        });
-
-        btn.addEventListener('mouseleave', () => {
-            // Возвращаем в центр
-            btn.style.transform = `translate(0px, 0px)`;
-        });
-    });
-
-    projects.forEach(btn => {
-        btn.addEventListener('mousemove', (e) => {
-            const rect = btn.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            
-            // Двигаем кнопку на 30% от отклонения курсора
-            btn.style.transform = `translate(${x * 0.1}px, ${y * 0.05}px)`;
-        });
-
-        btn.addEventListener('mouseleave', () => {
-            // Возвращаем в центр
-            btn.style.transform = `translate(0px, 0px)`;
+        el.addEventListener('mouseleave', () => {
+            el.style.transform = `translate(0px, 0px) rotateX(0deg) rotateY(0deg)`;
         });
     });
 }

@@ -20,9 +20,9 @@
     --glow-color: rgba(255, 255, 255, 0.3);
 
     /* Цвета для "Обо мне" по умолчанию */
-    --bg-blob-1: #350920;
-    --bg-blob-2: #1aff00;
-    --bg-blob-3: #0a2341;
+    --bg-blob-1: #000;
+    --bg-blob-2: #000;
+    --bg-blob-3: #000;
 }
 
 * {
@@ -1247,6 +1247,7 @@ li {
 
     .portfolio-preview {
         width: 100%;
+        align-items: center;
     }
 
     .projects-container-preview {
