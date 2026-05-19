@@ -31,7 +31,7 @@ async function navigate(pageId) {
     setTimeout(async () => {
         try {
             const lang = getCurrentLang();
-            const response = await fetch(`./pages/${lang}/${pageId}.html`);
+            const response = await fetch(`/pages/${lang}/${pageId}.html`);
             if (!response.ok) throw new Error('Ошибка загрузки');
             const html = await response.text();
 
