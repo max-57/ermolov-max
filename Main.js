@@ -474,7 +474,7 @@ function initMagneticButtons() {
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
     targets.forEach(el => {
-        let strength = 0.3;
+        let strength = 3;
         if (el.classList.contains('tag')) strength = 0.25;
         if (el.classList.contains('project-card')) strength = 0.05;
         if (el.classList.contains('logo-main')) strength = 0.5;
@@ -488,14 +488,11 @@ function initMagneticButtons() {
             x = Math.max(-14, Math.min(14, x));
             y = Math.max(-14, Math.min(14, y));
 
-            // Для десктопа добавляем наклон, для тача — только сдвиг
-            if (!isTouch) {
-                const rotateX = -y * 1;
-                const rotateY = x * 1;
-                el.style.transform = `translate(${x}px, ${y}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-            } else {
-                el.style.transform = `translate(${x}px, ${y}px)`;
-            }
+            
+            const rotateX = -y * 1;
+            const rotateY = x * 1;
+            el.style.transform = `translate(${x}px, ${y}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            console.log(`Translate: ${x}, ${y}; Rotate: ${rotateX}, ${rotateY}`);
         };
 
         const handleLeave = () => {
