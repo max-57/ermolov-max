@@ -468,39 +468,54 @@ function updateBackground(pageId) {
 
 
 function initMagneticButtons() {
-    // Собираем все элементы в один массив для обработки
     const targets = document.querySelectorAll('.btn, .tag, .project-card, .logo-main');
+    
+    // Определяем, поддерживает ли устройство только тач
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
     targets.forEach(el => {
-        // Определяем коэффициент силы для каждого типа элемента
-        let strength = 0.3; // дефолт для .btn
+        let strength = 0.3;
         if (el.classList.contains('tag')) strength = 0.25;
         if (el.classList.contains('project-card')) strength = 0.05;
         if (el.classList.contains('logo-main')) strength = 0.5;
 
-        el.addEventListener('mousemove', (e) => {
+        const handleMove = (clientX, clientY) => {
             const rect = el.getBoundingClientRect();
-            // Считаем центр
-            let x = (e.clientX - rect.left - rect.width / 2) * strength;
-            let y = (e.clientY - rect.top - rect.height / 2) * strength;
+            let x = (clientX - rect.left - rect.width / 2) * strength;
+            let y = (clientY - rect.top - rect.height / 2) * strength;
 
-            // Ограничиваем сдвиг в 16px (Math.min(val, 16) и Math.max(val, -16))
+            // Ограничение сдвига
             x = Math.max(-14, Math.min(14, x));
             y = Math.max(-14, Math.min(14, y));
 
-            // Добавляем наклон (tilt): 
-            // чем дальше от центра, тем сильнее наклон (в градусах)
-            const rotateX = -y * 1; 
-            const rotateY = x * 1;
+            // Для десктопа добавляем наклон, для тача — только сдвиг
+            if (!isTouch) {
+                const rotateX = -y * 1;
+                const rotateY = x * 1;
+                el.style.transform = `translate(${x}px, ${y}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            } else {
+                el.style.transform = `translate(${x}px, ${y}px)`;
+            }
+        };
 
-            el.style.transform = `translate(${x}px, ${y}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-        });
-
-        el.addEventListener('mouseleave', () => {
+        const handleLeave = () => {
             el.style.transform = `translate(0px, 0px) rotateX(0deg) rotateY(0deg)`;
-        });
+        };
+
+        // Мышь
+        el.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+        el.addEventListener('mouseleave', handleLeave);
+
+        // Тач
+        el.addEventListener('touchmove', (e) => {
+            handleMove(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: true });
+        
+        el.addEventListener('touchend', handleLeave);
     });
 }
+
+
 
 
 
