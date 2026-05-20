@@ -180,6 +180,7 @@ li {
     height: 100%;
     min-height: 90dvh;
     max-width: 80rem;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
 .header {
@@ -499,6 +500,7 @@ li {
     margin-right: auto;
     max-width: 80rem;
     box-sizing: border-box;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
 .projects-container-preview {
@@ -593,7 +595,7 @@ li {
     width: 100%;
     max-width: 80rem;
     margin: 0 auto;
-    padding: 2rem 1rem 8rem 1rem;
+    padding: 1rem 1rem 8rem 1rem;
     animation: fadeIn 0.5s ease-in-out;
 }
 
@@ -634,41 +636,35 @@ li {
 /* Контентная сетка проекта */
 .project-grid-content {
     display: grid;
-    grid-template-columns: 1.5fr 1fr; /* Основной текст шире сайдбара с аккордеоном */
-    gap: 4rem;
+    grid-template-columns: 1fr 2fr; /* Основной текст шире сайдбара с аккордеоном */
+    gap: 1.5rem;
     align-items: start;
 }
 
-.project-section h3 {
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-}
-
-.project-section p {
-    font-size: 1.2rem;
-    color: var(--font-color-secondary);
-    line-height: 1.6;
-}
-
-/* Стилизация аккордеона внутри проекта */
-.project-details-accordion {
-    position: sticky;
-    top: 100px; /* Прилипает при скролле */
+.project-column {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-/* Твои существующие стили .accordion-item дополним спецификой для страниц */
-.project-details-accordion .accordion-item {
-    background: var(--background-about-me);
-    border: 1px solid var(--menu-border-color);
-    border-radius: 16px;
-    padding: 1.5rem;
+/* Стилизация аккордеона внутри проекта */
+.project-details-container {
+    position: sticky;
+    top: 100px; /* Прилипает при скролле */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
-.project-details-accordion .accordion-title span {
+/* Твои существующие стили .accordion-item дополним спецификой для страниц */
+.project-details-card {
+    background: var(--background-card);
+    border: 0.0625rem solid var(--menu-border-color);
+    border-radius: 1rem;
+    padding: 1rem;
+}
+
+.project-details-accordion {
     display: block;
     font-size: 0.8rem;
     text-transform: uppercase;
@@ -677,7 +673,7 @@ li {
     margin-bottom: 0.25rem;
 }
 
-.project-details-accordion .accordion-title small {
+.project-details-accordion {
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--font-color-primary);
@@ -835,8 +831,29 @@ li {
     transition: transform 0.3s ease;
 }
 
+.back-and-lang {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    padding: 0 1rem;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 80rem;
+    transition: transform 0.3s ease;
+}
+
 .hidden {
     transform: translate(-50%, -150%);
+}
+
+.permanent-hidden {
+    transform: translate(-50%, -300%);
+    transition: transform 0.9s ease !important;
 }
 
 /* ============================================
@@ -883,8 +900,8 @@ li {
 
 /* Контейнер айтема */
 .accordion-item {
-    border-bottom: 1px solid var(--menu-border-color);
-    cursor: pointer; /* Делаем всю строку кликабельной */
+    margin-bottom: 1rem;
+    cursor: pointer;
 }
 
 /* Заголовок и стрелка */
@@ -892,7 +909,6 @@ li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 0;
     gap: 2rem;
 }
 
@@ -1216,6 +1232,10 @@ li {
         align-items: center;
     }
 
+    .project-grid-content {
+        grid-template-columns: 1fr 1fr;
+    }
+
 }
 
 @media (max-width: 1090px) {
@@ -1283,6 +1303,12 @@ li {
 
     .header, .about-me-text, .about-me-image, .experience-text, .experience-title {
         width: 100%;
+    }
+
+    .project-grid-content {
+        display:flex;
+        flex-direction: column;
+        gap: 4rem;
     }
 }
 

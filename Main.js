@@ -22,6 +22,9 @@ function toggleLanguage() {
 
 
 // --- ФУНКЦИЯ SPA НАВИГАЦИИ ---
+
+const projectPages = ['fintech', 'construction-saas'];
+
 async function navigate(pageId) {
     const contentArea = document.querySelector('.content');
     if (!contentArea) return;
@@ -57,40 +60,32 @@ async function navigate(pageId) {
             updateBackground(pageId);// Переключаем цветовую палитру фона под текущую страницу
             // ==========================================================================
 
-            const menuBox = document.getElementById('menu-container');
-            const logoBox = document.getElementById('logo-container');
-            const actionsBox = document.getElementById('actions-container');
+            const menuBox = document.querySelector('.navbar-frame');
+            const backAndLang = document.querySelector('.back-and-lang');
 
-            const isStandardPage = navbarConfig.menu.some(item => item.link === pageId) || pageId === 'about-me';
+            const isProjectPage = projectPages.includes(pageId);
             
-            if (menuBox) {
-                if (!isStandardPage) {
-                    // РЕЖИМ ПРОЕКТА
-                    if (logoBox) logoBox.style.display = 'none';
-                    if (actionsBox) actionsBox.style.display = 'none';
-                    // ... твой код кастомного меню для проектов
-                } else {
-                    // СТАНДАРТНАЯ СТРАНИЦА (Обычное меню)
-                    if (logoBox) logoBox.style.display = 'flex';
-                    if (actionsBox) actionsBox.style.display = 'flex';
-                    
-                    // Если мы вернулись из проекта и меню было стёрто — пересобираем его
-                    if (!menuBox.querySelector('.nav-menu-pill')) {
-                        initNavbar();
-                    } else {
-                        // ЖИВОЙ ПЕРЕКЛЮЧАТЕЛЬ КЛАССА ACTIVE:
-                        const links = menuBox.querySelectorAll('.nav-pill-item');
-                        links.forEach(link => {
-                            const linkPage = link.getAttribute('href').replace('#', '');
-                            
-                            if (linkPage === pageId) {
-                                link.classList.add('active');
-                            } else {
-                                link.classList.remove('active');
-                            }
-                        });
-                    }
-                }
+            if (isProjectPage) {
+                // РЕЖИМ ПРОЕКТА
+                if (menuBox) menuBox.classList.add('permanent-hidden');
+                if (backAndLang) backAndLang.classList.remove('permanent-hidden');
+                console.log("=== NNNAVIGATE DEBUG ===");
+                console.log("pageId:", pageId);
+                console.log("menu:", menuBox);
+                console.log("isProjectPage:", isProjectPage);
+                console.log("======================");
+                // ... твой код кастомного меню для проектов
+            } else {
+                // СТАНДАРТНАЯ СТРАНИЦА
+                if (menuBox) menuBox.classList.remove('permanent-hidden');
+                if (backAndLang) backAndLang.classList.add('permanent-hidden');
+                
+                // Если мы вернулись из проекта и меню было стёрто — пересобираем его
+                if (!menuBox) {initNavbar();}
+                console.log("=== NAVIGATE DEBUG ===");
+                console.log("pageId:", pageId);
+                console.log("isProjectPage:", isProjectPage);
+                console.log("======================");
             }
 
             contentArea.style.opacity = '1';
@@ -141,13 +136,13 @@ function initNavbar() {
     const lang = getCurrentLang();
     const currentHash = window.location.hash.replace('#', '') || 'about-me';
 
-    // 1. Наполняем логотип (вставляем <img> внутрь твоего <div>)
+    // 1. Логотип
     const logoContainer = document.getElementById('logo-link');
     if (logoContainer) {
         logoContainer.innerHTML = `<img src="${navbarConfig.logo.src}" alt="${navbarConfig.logo.alt}" class="logo-img">`;
     }
 
-    // 2. Рендерим пункты меню в #menu-pill
+    // 2. Пункты меню
     const menuPill = document.getElementById('menu-pill');
     if (menuPill) {
         menuPill.innerHTML = navbarConfig.menu.map(item => {
@@ -156,7 +151,7 @@ function initNavbar() {
         }).join('');
     }
 
-    // 3. Рендерим соцсети в #social-icons
+    // 3. Соцсети
     const socialIcons = document.getElementById('social-icons');
     if (socialIcons) {
         socialIcons.innerHTML = navbarConfig.socials.map(s => `
@@ -166,32 +161,18 @@ function initNavbar() {
         `).join('');
     }
 
-    // 4. Рендерим флаги в #lang-switcher
-    const langSwitcher = document.getElementById('lang-switcher');
-    if (langSwitcher) {
-        langSwitcher.innerHTML = navbarConfig.langswitcher.map(item => {
-            const isActive = item.flag === lang;
-            return `
-                <div class="lang-flag-wrapper ${isActive ? 'active' : ''}" data-lang="${item.flag}">
-                    <img src="${item.img}" alt="${item.flag}" class="flag-img">
-                </div>
-            `;
-        }).join('');
-    }
+    // 4. Отрисовка ВСЕХ свитчеров языка (по классу)
+    const switchers = document.querySelectorAll('.lang-switcher-pill');
+    const switcherHTML = navbarConfig.langswitcher.map(item => {
+        const isActive = item.flag === lang;
+        return `
+            <div class="lang-flag-wrapper ${isActive ? 'active' : ''}" data-lang="${item.flag}">
+                <img src="${item.img}" alt="${item.flag}" class="flag-img">
+            </div>
+        `;
+    }).join('');
 
-    // 5. Обработчик свитчера языков
-    const switcherBtn = document.getElementById('lang-switcher');
-    if (switcherBtn && !switcherBtn.dataset.listenerReady) {
-        switcherBtn.addEventListener('click', (e) => {
-            const clickedFlag = e.target.closest('.lang-flag-wrapper');
-            if (!clickedFlag || clickedFlag.classList.contains('active')) {
-                e.preventDefault();
-                return;
-            }
-            toggleLanguage(e); 
-        });
-        switcherBtn.dataset.listenerReady = "true";
-    }
+    switchers.forEach(el => el.innerHTML = switcherHTML);
 
     if (!window.spaInitialized) {
         initSPA();
@@ -199,13 +180,31 @@ function initNavbar() {
     }
 }
 
+// Глобальный слушатель для свитчеров языка
+document.addEventListener('click', (e) => {
+    const clickedFlag = e.target.closest('.lang-flag-wrapper');
+    
+    // Если кликнули не по флагу или флаг уже активен — выходим
+    if (!clickedFlag || clickedFlag.classList.contains('active')) return;
+
+    // Вызываем твою функцию смены языка
+    toggleLanguage();
+});
+
 function initSPA() {
     // Перехват кликов по меню и логотипу
     document.addEventListener('click', (e) => {
-        const target = e.target.closest('.nav-links a, .logo, .project-card')
-        if (target) {
+        const target = e.target.closest('.nav-links a, .logo, .project-card, .to-portfolio, .btn-back')
+
+        if (target.classList.contains('btn-back')) {
             e.preventDefault();
-            const pageId = target.getAttribute('href');
+            window.history.back(); 
+            return;
+        }
+
+        e.preventDefault();
+        const pageId = target.getAttribute('href');
+        if (pageId) {
             window.history.pushState({ pageId }, '', `#${pageId}`);
             navigate(pageId);
         }
@@ -230,7 +229,8 @@ let lastScrollTop = 0;
 // чтобы window слышал скролл даже внутри твоего .content
 window.addEventListener('scroll', (e) => {
     const nav = document.querySelector('.navbar-frame');
-    const bg = document.querySelector('.navbar-bg');
+    const bg = document.querySelector('.navbar-bg'); 
+    const back = document.querySelector('.back-and-lang');
     if (!nav) return;
 
     // Магическая строчка: берём скролл именно с того элемента, который СЕЙЧАС крутится
@@ -241,9 +241,11 @@ window.addEventListener('scroll', (e) => {
     if (st > lastScrollTop && st > 100) {
         nav.classList.add('hidden');
         bg.classList.add('hidden');
+        back.classList.add('hidden');
     } else {
         nav.classList.remove('hidden');
         bg.classList.remove('hidden');
+        back.classList.remove('hidden');
     }
 
     lastScrollTop = st <= 0 ? 0 : st;
@@ -448,9 +450,9 @@ const pagePalettes = {
         '--bg-blob-3': '#aa6812'
     },
     'fintech': {
-        '--bg-blob-1': '#10bda3', // Глубокий изумрудный для финтеха
-        '--bg-blob-2': '#0adaba',
-        '--bg-blob-3': '#63d6c5'
+        '--bg-blob-1': '#6d7372', // Глубокий изумрудный для финтеха
+        '--bg-blob-2': '#788381',
+        '--bg-blob-3': '#565757'
     }
 };
 
@@ -474,7 +476,7 @@ function initMagneticButtons() {
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
     targets.forEach(el => {
-        let strength = 3;
+        let strength = 0.3;
         if (el.classList.contains('tag')) strength = 0.25;
         if (el.classList.contains('project-card')) strength = 0.05;
         if (el.classList.contains('logo-main')) strength = 0.5;
