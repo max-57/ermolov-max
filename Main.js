@@ -232,13 +232,14 @@ document.addEventListener('click', (e) => {
 function initSPA() {
     // Перехват кликов по меню и логотипу
     document.addEventListener('click', (e) => {
-        const target = e.target.closest('.nav-links a, .logo, .project-card, .to-portfolio, .btn-back')
-
-        if (target.classList.contains('btn-back')) {
+        // 1. Сначала ищем специфичные кнопки (Назад)
+        const backBtn = e.target.closest('.btn-back');
+        if (backBtn) {
             e.preventDefault();
             window.history.back(); 
-            return;
+            return; // ВАЖНО: выходим, чтобы не сработал код ниже
         }
+
 
         e.preventDefault();
         const pageId = target.getAttribute('href');
