@@ -2,6 +2,48 @@
 //  Меню и переходы
 //=========================================================
 
+//=======================================================
+// ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ
+//=========================================================
+
+window.addEventListener('DOMContentLoaded', () => {
+    // 1. Инициализируем навигационную панель
+    initNavbar();
+
+    // 2. Определяем, куда хотел попасть пользователь
+    const hash = window.location.hash.replace('#', '');
+    const path = window.location.pathname.replace('/', ''); // например, "about-me"
+
+    // Приоритет: 1. Хэш, 2. Путь (если был введен напрямую), 3. Главная
+    let targetPage = hash || path || 'about-me';
+
+    // 3. Загружаем нужную страницу без перезагрузки
+    navigate(targetPage);
+});
+
+// Глобальный перехват всех кликов по ссылкам
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    const href = link.getAttribute('href');
+
+    // Если ссылка начинается на http или mailto — это внешний переход
+    if (href.startsWith('http') || href.startsWith('mailto')) return;
+
+    // Если это внутренняя ссылка
+    e.preventDefault();
+    
+    // Очищаем href от #
+    const pageId = href.replace('#', '');
+    
+    // Меняем URL в браузере БЕЗ перезагрузки
+    window.history.pushState({ pageId }, '', `#${pageId}`);
+    
+    // Грузим контент
+    navigate(pageId);
+});
+
 // Получить текущий язык (по умолчанию 'ru')
 function getCurrentLang() {
     return localStorage.getItem('preferred_lang') || 'ru';
@@ -23,9 +65,11 @@ function toggleLanguage() {
 
 // --- ФУНКЦИЯ SPA НАВИГАЦИИ ---
 
-const projectPages = ['fintech', 'construction-saas'];
+const projectPages = ['about-me', 'portfolio'];
 
 async function navigate(pageId) {
+    // 1. Очистка pageId от лишних символов (например, если пришло #portfolio)
+    const cleanPageId = pageId.replace('#', '');
     const contentArea = document.querySelector('.content');
     if (!contentArea) return;
 
@@ -34,68 +78,62 @@ async function navigate(pageId) {
     setTimeout(async () => {
         try {
             const lang = getCurrentLang();
-            const response = await fetch(`/pages/${lang}/${pageId}.html`);
-            if (!response.ok) throw new Error('Ошибка загрузки');
-            const html = await response.text();
+            const menuBox = document.querySelector('.navbar-frame');
 
-            // 1. Вставляем новый контент в DOM
+            // Пробуем загрузить страницу
+            let response = await fetch(`/pages/${lang}/${cleanPageId}.html`);
+            
+            // Если не нашли — пробуем 404
+            if (!response.ok) {
+                console.warn(`Страница ${cleanPageId} не найдена, перенаправляю на 404`);                
+                response = await fetch(`/pages/ru/404.html`);
+            }
+
+            // Если даже 404 не грузится — тогда уже выкидываем ошибку
+            if (!response.ok) throw new Error('404 страница не найдена');
+
+            const html = await response.text();
             contentArea.innerHTML = html;
-            // Даем браузеру микропаузу, чтобы он успел вдуплить новый HTML и посчитать высоту страницы
+
+            // Теперь остальная логика
             requestAnimationFrame(() => {
-                document.body.scrollTop = 0;                  // Обнуляем тег <body>
-                
-                // И только теперь сбрасываем переменную для нашего обработчика скролла шапки
-                lastScrollTop = 0;
-                
-                // Если у тебя на шапке висел класс скрытия, принудительно убираем его при переходе
+                window.scrollTo(0, 0); // Используем window.scrollTo вместо document.body
                 const nav = document.querySelector('.navbar-frame') || document.querySelector('.navbar');
                 if (nav) nav.classList.remove('hidden');
             });
 
-            initAccordion();         // Перезапуск аккордеона
-            initExperienceCounter(); // Перезапуск счетчика стажа
-            initMarquee();           // Перезапуск бесконечной бегущей строки
-            initSkillsAnimation();   // Перезапуск анимации прогресс-баров
-            initMagneticButtons();   // Навешиваем магнитный эффект на новые кнопки/карточки
-            updateBackground(pageId);// Переключаем цветовую палитру фона под текущую страницу
-            // ==========================================================================
+            // Перезапуск компонентов
+            initAccordion();
+            initExperienceCounter();
+            initMarquee();
+            initSkillsAnimation();
+            initMagneticButtons();
+            updateBackground(cleanPageId);
 
-            const menuBox = document.querySelector('.navbar-frame');
-            const backAndLang = document.querySelector('.back-and-lang');
-
-            const isProjectPage = projectPages.includes(pageId);
+            // Логика меню
             
-            if (isProjectPage) {
-                // РЕЖИМ ПРОЕКТА
+            const backAndLang = document.querySelector('.back-and-lang');
+            const isStandartPage = projectPages.includes(cleanPageId);
+            
+            if (!isStandartPage) {
                 if (menuBox) menuBox.classList.add('permanent-hidden');
                 if (backAndLang) backAndLang.classList.remove('permanent-hidden');
-                console.log("=== NNNAVIGATE DEBUG ===");
-                console.log("pageId:", pageId);
-                console.log("menu:", menuBox);
-                console.log("isProjectPage:", isProjectPage);
-                console.log("======================");
-                // ... твой код кастомного меню для проектов
             } else {
-                // СТАНДАРТНАЯ СТРАНИЦА
                 if (menuBox) menuBox.classList.remove('permanent-hidden');
                 if (backAndLang) backAndLang.classList.add('permanent-hidden');
-                
-                // Если мы вернулись из проекта и меню было стёрто — пересобираем его
-                if (!menuBox) {initNavbar();}
-                console.log("=== NAVIGATE DEBUG ===");
-                console.log("pageId:", pageId);
-                console.log("isProjectPage:", isProjectPage);
-                console.log("======================");
+                if (!menuBox) initNavbar();
             }
 
             contentArea.style.opacity = '1';
             
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
+            // Теперь здесь переменная err, которую ты передал в catch
+            console.error("Критическая ошибка навигации:", err);
+            contentArea.innerHTML = '<h1>Ошибка загрузки</h1>';
+            contentArea.style.opacity = '1';
         }
     }, 150);
 }
-
 
 function updateActiveState(pageId) {
     const links = document.querySelectorAll('.nav-links a');
@@ -453,6 +491,16 @@ const pagePalettes = {
         '--bg-blob-1': '#6d7372', // Глубокий изумрудный для финтеха
         '--bg-blob-2': '#788381',
         '--bg-blob-3': '#565757'
+    },
+        'quests': {
+        '--bg-blob-1': '#856100', // Глубокий изумрудный для финтеха
+        '--bg-blob-2': '#aa800d',
+        '--bg-blob-3': '#bb720c'
+    },
+        'kpd': {
+        '--bg-blob-1': '#4FAC50', // Глубокий изумрудный для финтеха
+        '--bg-blob-2': '#DB7A03',
+        '--bg-blob-3': '#bbbb0c'
     }
 };
 
@@ -470,7 +518,7 @@ function updateBackground(pageId) {
 
 
 function initMagneticButtons() {
-    const targets = document.querySelectorAll('.btn, .tag, .project-card, .logo-main');
+    const targets = document.querySelectorAll('.btn, .tag, .project-card, .logo-main, .magnetic, .ignore-magnetic');
     
     // Определяем, поддерживает ли устройство только тач
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -480,6 +528,8 @@ function initMagneticButtons() {
         if (el.classList.contains('tag')) strength = 0.25;
         if (el.classList.contains('project-card')) strength = 0.05;
         if (el.classList.contains('logo-main')) strength = 0.5;
+        if (el.classList.contains('magnetic')) strength = 0.025;
+        if (el.classList.contains('ignore-magnetic')) strength = 0;
 
         const handleMove = (clientX, clientY) => {
             const rect = el.getBoundingClientRect();
