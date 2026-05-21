@@ -502,6 +502,12 @@ const pagePalettes = {
         '--bg-blob-2': '#DB7A03',
         '--bg-blob-3': '#bbbb0c'
     }
+    ,
+        '404': {
+        '--bg-blob-1': '#ff5e00', // Глубокий изумрудный для финтеха
+        '--bg-blob-2': '#ff0000',
+        '--bg-blob-3': '#ff003c'
+    }
 };
 
 function updateBackground(pageId) {
