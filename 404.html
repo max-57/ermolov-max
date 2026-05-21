@@ -1,0 +1,12 @@
+<div class="error-container">
+    <h1 class="error-code">404</h1>
+    <p class="error-text">Похоже, этой страницы больше нет или она еще не создана.</p>
+</div>
+<script>
+  // Берем путь, который хотел пользователь (например, /about-me)
+  // и перекидываем его в хэш-ссылку: /#about-me
+  var path = window.location.pathname;
+  if (path !== '/') {
+    window.location.replace('/#' + path.replace('/', ''));
+  }
+</script>
