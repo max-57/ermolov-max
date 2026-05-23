@@ -65,55 +65,44 @@ function toggleLanguage() {
 
 // --- ФУНКЦИЯ SPA НАВИГАЦИИ ---
 
+// --- ИНИЦИАЛИЗАЦИЯ (вне функций) ---
 const projectPages = ['about-me', 'portfolio'];
 
 async function navigate(pageId) {
-    // 1. Очистка pageId от лишних символов (например, если пришло #portfolio)
     const cleanPageId = pageId.replace('#', '');
     const contentArea = document.querySelector('.content');
+    
     if (!contentArea) return;
 
+    // Скрываем контент
     contentArea.style.opacity = '0';
 
     setTimeout(async () => {
         try {
             const lang = getCurrentLang();
-            const menuBox = document.querySelector('.navbar-frame');
-
-            // Пробуем загрузить страницу
             let response = await fetch(`/pages/${lang}/${cleanPageId}.html`);
+            if (!response.ok) response = await fetch(`/pages/ru/404.html`);
             
-            // Если не нашли — пробуем 404
-            if (!response.ok) {
-                console.warn(`Страница ${cleanPageId} не найдена, перенаправляю на 404`);                
-                response = await fetch(`/pages/ru/404.html`);
-            }
-
-            // Если даже 404 не грузится — тогда уже выкидываем ошибку
-            if (!response.ok) throw new Error('404 страница не найдена');
-
             const html = await response.text();
             contentArea.innerHTML = html;
 
-            // Теперь остальная логика
-            requestAnimationFrame(() => {
-                window.scrollTo(0, 0); // Используем window.scrollTo вместо document.body
-                const nav = document.querySelector('.navbar-frame') || document.querySelector('.navbar');
-                if (nav) nav.classList.remove('hidden');
-            });
+            contentArea.scrollTop = 0;
 
-            // Перезапуск компонентов
+            // Скролл не трогаем — пусть браузер сам делает свое дело
+            contentArea.style.opacity = '1';
+
+            // ИНИТЫ
             initAccordion();
             initExperienceCounter();
             initMarquee();
             initSkillsAnimation();
             initMagneticButtons();
             updateBackground(cleanPageId);
-
-            // Логика меню
+            updateMenuIndicator(cleanPageId);
             
+            let menuBox = document.querySelector('.navbar-frame');
             const backAndLang = document.querySelector('.back-and-lang');
-            const isStandartPage = projectPages.includes(cleanPageId);
+            const isStandartPage = (cleanPageId === 'about-me' || cleanPageId === 'portfolio');
             
             if (!isStandartPage) {
                 if (menuBox) menuBox.classList.add('permanent-hidden');
@@ -123,25 +112,34 @@ async function navigate(pageId) {
                 if (backAndLang) backAndLang.classList.add('permanent-hidden');
                 if (!menuBox) initNavbar();
             }
-
-            contentArea.style.opacity = '1';
             
         } catch (err) {
-            // Теперь здесь переменная err, которую ты передал в catch
-            console.error("Критическая ошибка навигации:", err);
-            contentArea.innerHTML = '<h1>Ошибка загрузки</h1>';
+            console.error("Ошибка:", err);
             contentArea.style.opacity = '1';
         }
     }, 150);
 }
 
-function updateActiveState(pageId) {
-    const links = document.querySelectorAll('.nav-links a');
+// --- ЖЕЛЕЗОБЕТОННАЯ ФУНКЦИЯ ОБНОВЛЕНИЯ МЕНЮ ---
+function updateMenuIndicator(pageId) {
+    if (!pageId) return;
+    
+    // Очищаем pageId от решеток, чтобы сравнивать чистые названия (about-me, portfolio)
+    const cleanPageId = pageId.replace('#', '');
+    
+    // Ищем все ссылки в меню (на всякий случай учитываем оба класса)
+    const links = document.querySelectorAll('.nav-pill-item, .nav-links a');
+    
     links.forEach(link => {
-        const href = link.getAttribute('href');
-        if (href === pageId) {
+        // Получаем href ссылки и тоже очищаем его от #
+        const href = link.getAttribute('href') || '';
+        const linkTarget = href.replace('#', '');
+        
+        // Если цель ссылки совпадает с текущей загруженной страницей
+        if (linkTarget === cleanPageId) {
             link.classList.add('active');
-            // Принудительно вызываем движение линии под новый активный элемент
+            
+            // Если у тебя используется анимированная линия (underline)
             if (typeof setupUnderline === 'function') {
                 const underline = document.getElementById('underline');
                 const menu = document.getElementById('menu-container');
@@ -149,25 +147,17 @@ function updateActiveState(pageId) {
                     const rect = link.getBoundingClientRect();
                     const menuRect = menu.getBoundingClientRect();
                     underline.style.width = `${rect.width}px`;
-                    underline.style.left = `${rect.left}px`;
+                    // Считаем позицию относительно родительского контейнера
+                    underline.style.left = `${rect.left - menuRect.left}px`;
                     underline.style.opacity = "1";
                 }
             }
         } else {
+            // Если не совпадает — жестко убираем класс
             link.classList.remove('active');
         }
     });
 }
-
-document.getElementById('menu-pill').addEventListener('click', (e) => {
-    const link = e.target.closest('.nav-pill-item');
-    if (!link) return;
-
-    // Снимаем со всех
-    document.querySelectorAll('.nav-pill-item').forEach(el => el.classList.remove('active'));
-    // Вешаем на того, по кому кликнули
-    link.classList.add('active');
-});
 
 // --- ОТРИСОВКА NAVBAR ---
 function initNavbar() {
@@ -484,28 +474,42 @@ const pagePalettes = {
         '--bg-blob-3': '#580952'
     },
     'portfolio': {
-        '--bg-blob-1': '#46bd2c', // Темно-фиолетовый
+        '--bg-blob-1': '#46bd2c', 
         '--bg-blob-2': '#1a9a1e',
         '--bg-blob-3': '#aa6812'
     },
     'fintech': {
-        '--bg-blob-1': '#6d7372', // Глубокий изумрудный для финтеха
+        '--bg-blob-1': '#6d7372', 
         '--bg-blob-2': '#788381',
         '--bg-blob-3': '#565757'
     },
         'quests': {
-        '--bg-blob-1': '#856100', // Глубокий изумрудный для финтеха
+        '--bg-blob-1': '#856100', 
         '--bg-blob-2': '#aa800d',
         '--bg-blob-3': '#bb720c'
     },
         'kpd': {
-        '--bg-blob-1': '#4FAC50', // Глубокий изумрудный для финтеха
+        '--bg-blob-1': '#4FAC50', 
         '--bg-blob-2': '#DB7A03',
         '--bg-blob-3': '#bbbb0c'
-    }
-    ,
+    },
+        'logistic': {
+        '--bg-blob-1': '#046959', 
+        '--bg-blob-2': '#024138',
+        '--bg-blob-3': '#9c8000'
+    },
+        'restaurant': {
+        '--bg-blob-1': '#671C2D', 
+        '--bg-blob-2': '#4B2222',
+        '--bg-blob-3': '#610118'
+    },
+        'barber': {
+        '--bg-blob-1': '#275FF4', 
+        '--bg-blob-2': 'rgb(88, 10, 10)',
+        '--bg-blob-3': '#032fa7'
+    },
         '404': {
-        '--bg-blob-1': '#ff5e00', // Глубокий изумрудный для финтеха
+        '--bg-blob-1': '#ff5e00', 
         '--bg-blob-2': '#ff0000',
         '--bg-blob-3': '#ff003c'
     }
@@ -551,7 +555,6 @@ function initMagneticButtons() {
             const rotateX = -y * 1;
             const rotateY = x * 1;
             el.style.transform = `translate(${x}px, ${y}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-            console.log(`Translate: ${x}, ${y}; Rotate: ${rotateX}, ${rotateY}`);
         };
 
         const handleLeave = () => {
