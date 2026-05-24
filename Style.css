@@ -32,6 +32,7 @@
 html {
     scroll-behavior: smooth;
     overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
