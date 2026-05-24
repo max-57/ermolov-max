@@ -494,6 +494,16 @@ li {
     padding: 0 1rem 0 1rem;
 }
 
+.rotate-90 {
+    writing-mode: vertical-rl; /* или sideways-rl для полного контроля */
+  text-orientation: mixed;
+  /* Дополнительные стили для центровки */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.2rem 1rem !important;
+}
+
 
 /* ============================================
    404
