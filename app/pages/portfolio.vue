@@ -15,7 +15,7 @@ useSeoMeta({ title: () => `${title.value} · Max Ermolov` })
 
 <template>
   <section class="portfolio-list">
-    <h1 class="visually-hidden">{{ title }}</h1>
+    <h1 class="portfolio-title">{{ title }}</h1>
     <div class="projects-container">
       <ProjectCard v-for="project in catalog" :key="project.slug" :project="project" />
     </div>

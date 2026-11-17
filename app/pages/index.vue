@@ -130,9 +130,15 @@ useSeoMeta({
     <section class="First-section" aria-labelledby="profile-title">
       <img v-magnetic="0.5" :src="'/images/Logo.svg'" alt="" class="logo-main" fetchpriority="high">
       <div class="header">
+        <p class="profile-name">{{ language === 'en' ? 'Maxim Ermolov' : 'Максим Ермолов' }}</p>
         <h1 id="profile-title" lang="en">PRODUCT DESIGNER</h1>
         <p class="profile-focus">{{ copy.focus }}</p>
-        <a v-magnetic :href="resumeUrl" class="btn"><span>{{ language === 'en' ? 'Download CV' : copy.resumeLabel }}</span></a>
+        <div class="profile-actions">
+          <NuxtLink v-magnetic :to="pathFor('portfolio')" class="btn profile-projects-link">
+            <span>{{ language === 'en' ? 'View projects' : 'Смотреть проекты' }}</span><span aria-hidden="true">→</span>
+          </NuxtLink>
+          <a v-magnetic :href="resumeUrl" class="btn"><span>{{ language === 'en' ? 'Download CV' : copy.resumeLabel }}</span></a>
+        </div>
       </div>
     </section>
 
