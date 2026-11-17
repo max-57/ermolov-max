@@ -14,18 +14,24 @@ useSeoMeta({
 
 <template>
   <div class="content-wrapper profile-page">
-    <section class="First-section">
+    <section class="First-section" aria-labelledby="profile-title">
       <img :src="'/images/Logo.svg'" alt="" class="logo-main" fetchpriority="high">
       <div class="header">
-        <h1>{{ copy.role }}</h1>
+        <p class="hero-name">{{ language === 'en' ? 'Maxim Ermolov' : 'Максим Ермолов' }}</p>
+        <h1 id="profile-title">{{ copy.role }}</h1>
         <p class="profile-focus">{{ copy.focus }}</p>
-        <a :href="resumeUrl" class="btn">{{ copy.resumeLabel }}</a>
+        <div class="hero-actions">
+          <NuxtLink :to="pathFor('portfolio')" class="btn hero-primary">
+            {{ language === 'en' ? 'View work' : 'Смотреть работы' }} <span aria-hidden="true">→</span>
+          </NuxtLink>
+          <a :href="resumeUrl" class="btn">{{ copy.resumeLabel }}</a>
+        </div>
       </div>
     </section>
 
     <div class="marquee-wrapper">
       <div class="marquee-track">
-        <div v-for="repeat in 2" :key="repeat" class="marquee-list" :aria-hidden="repeat === 2 ? 'true' : undefined">
+        <div v-for="repeat in 3" :key="repeat" class="marquee-list" :aria-hidden="repeat > 1 ? 'true' : undefined">
           <span v-for="skill in specialties" :key="skill" class="skill">{{ skill }}</span>
         </div>
       </div>
@@ -42,6 +48,16 @@ useSeoMeta({
             <img :src="'/images/Me.png'" alt="" loading="lazy" decoding="async">
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="portfolio-preview">
+      <div class="portfolio-preview-header">
+        <h2>{{ copy.selectedWorkTitle }}</h2>
+        <NuxtLink :to="pathFor('portfolio')" class="btn">{{ copy.seeAllWorkLabel }}</NuxtLink>
+      </div>
+      <div class="projects-container-preview">
+        <ProjectCard v-for="project in selected" :key="project.slug" :project="project" />
       </div>
     </section>
 
@@ -75,16 +91,6 @@ useSeoMeta({
             </ul>
           </div>
         </div>
-      </div>
-    </section>
-
-    <section class="portfolio-preview">
-      <div class="portfolio-preview-header">
-        <h2>{{ copy.selectedWorkTitle }}</h2>
-        <NuxtLink :to="pathFor('portfolio')" class="btn">{{ copy.seeAllWorkLabel }}</NuxtLink>
-      </div>
-      <div class="projects-container-preview">
-        <ProjectCard v-for="project in selected" :key="project.slug" :project="project" />
       </div>
     </section>
 

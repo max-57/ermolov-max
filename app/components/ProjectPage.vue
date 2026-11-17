@@ -18,11 +18,11 @@ useSeoMeta({
   <article class="project-page case-page">
     <header class="project-hero">
       <div class="project-header-info">
-        <img v-if="project.cover" :src="project.cover" alt="" class="project-cover" decoding="async">
         <span class="card-label">{{ copy.label }}</span>
         <h1>{{ copy.title }}</h1>
         <p class="project-subtitle">{{ copy.description }}</p>
       </div>
+      <img v-if="project.cover" :src="project.cover" alt="" class="project-cover" decoding="async" fetchpriority="high">
     </header>
 
     <div class="case-body" :class="{ 'project-grid-content': copy.details?.length || project.tags?.length }">

@@ -133,15 +133,13 @@ body {
 }
 
 h1 {
-    Width: 80;
     font-size: 8rem;
-    font-weight: 1600;
+    font-weight: 800;
     margin: 0;
     line-height: 90%;
 }
 
 h2 {
-    Width: 80;
     font-size: 3.5rem;
     font-weight: 700;
     margin: 0;
@@ -1095,7 +1093,6 @@ li {
 .skill {
     text-transform: uppercase;
     font-size: 2rem;
-    Width: 80;
     font-weight: 1000;
     margin: 0;
 }
