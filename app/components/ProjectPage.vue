@@ -18,11 +18,11 @@ useSeoMeta({
   <article class="project-page case-page">
     <header class="project-hero">
       <div class="project-header-info">
+        <img v-if="project.cover" v-magnetic="0.025" :src="project.cover" alt="" class="case-cover" decoding="async" fetchpriority="high">
         <span class="card-label">{{ copy.label }}</span>
         <h1>{{ copy.title }}</h1>
         <p class="project-subtitle">{{ copy.description }}</p>
       </div>
-      <img v-if="project.cover" v-magnetic="0.025" :src="project.cover" alt="" class="project-cover" decoding="async" fetchpriority="high">
     </header>
 
     <div class="case-body" :class="{ 'project-grid-content': copy.details?.length || project.tags?.length }">
@@ -39,7 +39,7 @@ useSeoMeta({
       </aside>
       <div class="project-column">
         <section v-for="section in copy.sections" :key="section.title" class="project-section">
-          <h2>{{ section.title }}</h2>
+          <h2 class="case-section-title">{{ section.title }}</h2>
           <p v-if="section.text" class="case-text">{{ section.text }}</p>
           <template v-for="media in section.media" :key="media.src">
             <video v-if="media.video" :src="media.src" :aria-label="media.alt" controls playsinline preload="none" />

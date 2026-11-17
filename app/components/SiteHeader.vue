@@ -4,13 +4,13 @@ import { profileContacts } from '~/content/profile'
 const { language, slug, pathFor } = usePortfolioRouting()
 const isProject = computed(() => Boolean(slug.value && slug.value !== 'portfolio'))
 const names = {
-  ru: { about: 'Обо мне', portfolio: 'Портфолио', nav: 'Основная навигация', back: 'Все работы' },
-  en: { about: 'About me', portfolio: 'Portfolio', nav: 'Main navigation', back: 'All work' },
+  ru: { about: 'Обо мне', portfolio: 'Портфолио', nav: 'Основная навигация', back: 'Назад' },
+  en: { about: 'About me', portfolio: 'Portfolio', nav: 'Main navigation', back: 'Back' },
 }
 </script>
 
 <template>
-  <nav class="navbar-frame site-navbar" :aria-label="names[language].nav">
+  <nav class="site-navbar" :class="isProject ? 'back-and-lang' : 'navbar-frame'" :aria-label="names[language].nav">
     <NuxtLink v-if="isProject" v-magnetic :to="pathFor('portfolio')" class="btn btn-back">
       <span aria-hidden="true">←</span> {{ names[language].back }}
     </NuxtLink>
@@ -30,11 +30,13 @@ const names = {
         </a>
       </div>
     </template>
-    <div class="lang-switcher-pill locale-switcher">
-      <NuxtLink v-if="language === 'en'" :to="pathFor(slug, 'ru')" lang="ru" hreflang="ru" aria-label="По-русски">RU</NuxtLink>
-      <span v-else aria-current="true">RU</span>
-      <NuxtLink v-if="language === 'ru'" :to="pathFor(slug, 'en')" lang="en" hreflang="en" aria-label="In English">EN</NuxtLink>
-      <span v-else aria-current="true">EN</span>
+    <div class="lang-switcher-pill">
+      <NuxtLink v-for="lang in ['ru', 'en'] as const" :key="lang" :to="pathFor(slug, lang)" :lang="lang" :hreflang="lang"
+        class="lang-flag-wrapper" :class="{ active: lang === language }" :aria-current="lang === language ? 'true' : undefined"
+        :aria-label="lang === 'ru' ? 'По-русски' : 'In English'">
+        <img :src="`/images/flag-${lang}.svg`" alt="" class="flag-img">
+      </NuxtLink>
     </div>
   </nav>
+  <div class="navbar-bg" aria-hidden="true" />
 </template>
