@@ -124,7 +124,7 @@ export const profile: Record<'ru' | 'en', Profile> = {
   en: {
     role: 'Product Designer',
     focus: 'Design Engineer · B2B SaaS · EdTech',
-    intro: 'I’m a product designer with 4+ years in UX/UI. I design B2B interfaces, design systems and online learning experiences. I build interfaces with Vue and Nuxt and use Codex to work on UI code. Open to relocation.',
+    intro: 'Product designer with 4+ years in UX/UI. I design B2B interfaces, design systems and online learning experiences. I build interfaces in Vue/Nuxt and use Codex to work with UI code. Open to relocation.',
     resumeLabel: 'Download résumé',
     aboutTitle: 'About me',
     experienceTitle: 'Work experience',
@@ -138,7 +138,7 @@ export const profile: Record<'ru' | 'en', Profile> = {
       {
         role: 'Product Designer',
         company: 'Bozon (Russia)',
-        dates: 'Oct 2025 — present',
+        dates: '10.2025 — Present',
         highlights: [
           { title: 'AI for logistics', description: 'Designed the architecture and UX of an AI-assisted fleet management interface, turning complex operations data into clear workflows.' },
           { title: 'Construction fintech', description: 'Designed tools for working with cost estimates and financial data, including multi-level editing and cascading model updates.' },
@@ -148,8 +148,8 @@ export const profile: Record<'ru' | 'en', Profile> = {
       },
       {
         role: 'UX/UI Designer',
-        company: 'NomadicSoft (US, remote)',
-        dates: 'Jul 2025 — present',
+        company: 'NomadicSoft (USA/Remote)',
+        dates: '07.2025 — Present',
         highlights: [
           { title: 'Panika', description: 'Designed an admin interface for the company’s network of escape room partners. Created its design system from scratch and implemented it in code.' },
           { title: 'Operations workflows', description: 'Worked on interfaces for bookings, role-based access, billing, automatic payments and document management.' },
@@ -159,7 +159,7 @@ export const profile: Record<'ru' | 'en', Profile> = {
       {
         role: 'UX/UI Designer',
         company: 'ProMarketing (Russia)',
-        dates: 'Nov 2024 — present',
+        dates: '11.2024 — Present',
         highlights: [
           { title: 'Mobile products', description: 'Designed mobile apps and admin interfaces for CRM, logistics and KPI tracking.' },
           { title: 'Requirements', description: 'Took assignments from requirements gathering to preparing materials for development.' },
@@ -167,8 +167,8 @@ export const profile: Record<'ru' | 'en', Profile> = {
       },
       {
         role: 'UI Designer',
-        company: 'AppCake (Hong Kong, remote)',
-        dates: 'Jun 2021 — Oct 2023',
+        company: 'AppCake (Hong Kong/Remote)',
+        dates: '06.2021 — 10.2023',
         highlights: [
           { title: 'Gaming marketplaces', description: 'Designed marketplace interfaces for gaming content such as mods, skins and textures.' },
           { title: 'UI production', description: 'Set up a process for delivering interfaces quickly while maintaining consistent visual standards.' },
@@ -188,7 +188,7 @@ export const profile: Record<'ru' | 'en', Profile> = {
         institution: 'Don State Technical University',
         degree: 'Bachelor’s program in Applied Informatics',
         dates: '2023–2027',
-        details: ['Systems analysis', 'Discrete mathematics', 'Algorithms', 'Software engineering'],
+        details: ['Systems Analysis', 'Discrete Mathematics', 'Algorithms', 'Software Engineering'],
       },
     ],
   },

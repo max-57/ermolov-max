@@ -71,7 +71,7 @@ body { height: auto; min-height: 100dvh; }
 }
 
 .portfolio-list { width: 100%; }
-.portfolio-preview-header { align-items: center; gap: 1rem; }
+.portfolio-preview-header { align-items: center; }
 .portfolio-site .projects-container,
 .portfolio-site .projects-container-preview { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .portfolio-site .project-card { min-width: 0; }
@@ -136,6 +136,11 @@ body { height: auto; min-height: 100dvh; }
 }
 
 @media (max-width: 485px) {
+  [lang="en"] .experience-title h2 {
+    margin-inline-end: -1rem;
+    font-size: min(2.5rem, 9.35vw);
+    line-height: 3.625rem;
+  }
   .profile-page .education-title { font-size: 4rem; }
   .profile-page .First-section h1 { font-size: clamp(3.25rem, 16.5vw, 4rem); }
   .profile-page .logo-main { max-width: 80%; }

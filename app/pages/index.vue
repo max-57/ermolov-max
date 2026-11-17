@@ -8,10 +8,6 @@ const openJob = ref<number>()
 const experienceCounter = ref(copy.value.experienceAmount)
 const specialties = ['Figma', 'Variables', 'Tokens', 'Design Systems', 'Prototyping', 'Components', 'HTML', 'CSS', 'JavaScript', 'Git', 'PhotoShop', 'Illustrator', 'Blender', 'DaVinci Resolve']
 
-const aboutText = computed(() => language.value === 'ru'
-  ? copy.value.intro
-  : 'Product designer with 4+ years in UX/UI. I design B2B interfaces, design systems and online learning experiences. I build interfaces with Vue and Nuxt and use Codex to work on UI code. Open to relocation.')
-
 const skillCards = computed(() => [
   {
     kind: 'tools-card',
@@ -88,7 +84,7 @@ useSeoMeta({
         <div class="about-me">
           <div class="about-me-text">
             <h2 id="about-title">{{ copy.aboutTitle.toLocaleUpperCase(language) }}</h2>
-            <p>{{ aboutText }}</p>
+            <p>{{ copy.intro }}</p>
           </div>
           <div class="about-me-image">
             <img :src="'/images/Me.png'" alt="" loading="lazy" decoding="async">
