@@ -23,55 +23,43 @@ body { height: auto; min-height: 100dvh; }
 .site-navbar .btn-back { gap: 0.6rem; }
 .portfolio-site .navbar-bg { height: 6rem; }
 
-.profile-page { width: 100%; overflow-x: clip; }
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rem;
+  width: 100%;
+  overflow-x: clip;
+}
 .profile-page .First-section { height: auto; align-items: center; }
 .profile-page .header { min-width: 0; }
 .profile-page .logo-main { flex-shrink: 0; height: auto; object-fit: contain; }
 .profile-page .First-section h1 { overflow-wrap: anywhere; }
 .profile-focus { color: var(--font-color-secondary); font-size: 2rem; font-weight: 500; }
 .profile-page .marquee-list { white-space: nowrap; }
-.profile-page .marquee-wrapper { margin-bottom: -4rem; }
-.profile-page .about-me-line { position: relative; isolation: isolate; transform: none; }
-.profile-page .about-me-line::before { transform: rotate(5deg); }
-.profile-page .about-me { position: relative; transform: none; }
-.profile-page .about-me-image { flex: 1; min-width: 0; }
-.profile-page .about-me-image img { width: min(50%, 36rem); height: auto; }
 .profile-page .about-me-text p { color: var(--font-color-secondary); }
-.profile-page .experience-amount {
-  margin: 0;
-  font-size: clamp(7rem, 15vw, 12rem);
-  font-weight: 800;
-  line-height: 1;
+.profile-page .experience { width: 100%; }
+.profile-page .portfolio-preview { width: 100%; max-width: 80rem; }
+.profile-page .experience-counter {
+  font-size: 12rem;
+  font-weight: bolder;
   color: var(--font-color-primary);
 }
-.profile-page .education-wrapper::before { background-image: var(--education-image); }
+.profile-page .education-title { font-size: 8rem; line-height: 90%; }
+.profile-page .education-summary { color: var(--font-color-secondary); }
 
-.profile-job > summary {
-  position: relative;
-  display: grid;
-  gap: 0.25rem;
-  padding-right: 2rem;
+.profile-page .accordion-header {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
   cursor: pointer;
-  list-style: none;
 }
-.profile-job > summary::-webkit-details-marker { display: none; }
-.profile-job > summary::after {
-  content: '';
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  width: 0.65rem;
-  height: 0.65rem;
-  border: solid currentColor;
-  border-width: 0 1.5px 1.5px 0;
-  transform: rotate(45deg);
-}
-.profile-job[open] > summary::after { transform: rotate(225deg); }
-.profile-job summary strong { font-size: clamp(1.35rem, 3vw, 2rem); font-weight: 500; }
-.profile-job summary span { color: var(--font-color-secondary); font-size: 1rem; }
-.job-highlights { display: grid; gap: 0.65rem; padding-left: 1.25rem; font-size: 1rem; }
-.portfolio-skill-card h4 { margin: 0; font-size: 1.2rem; font-weight: 500; }
-.tag-list { list-style: none; padding: 0; }
+.profile-page .accordion-role { font-size: 2rem; font-weight: 500; }
+.profile-page .accordion-company { font-size: 1.25rem; color: var(--font-color-secondary); }
 
 .visually-hidden {
   position: absolute;
@@ -91,23 +79,16 @@ body { height: auto; min-height: 100dvh; }
 
 .case-page .case-cover { height: auto; object-fit: contain; }
 .case-page .case-body > .project-column { min-width: 0; }
-.case-page .project-details-card .card-label { font-size: 1rem; font-weight: 500; }
-.case-page .case-section-title { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 500; }
 .case-page .project-section img,
 .case-page .project-section video { display: block; width: 100%; height: auto; }
 .case-text { white-space: pre-line; }
+.case-caption-spaced { margin-top: 1rem; }
 .case-back { align-self: flex-start; }
 .error-page { padding-top: 3rem; }
 .error-page button { align-self: flex-start; cursor: pointer; font: inherit; }
 
 @media (min-width: 769px) {
-  .case-page .case-aside {
-    position: sticky;
-    top: 6rem;
-    max-height: calc(100dvh - 7rem);
-    overflow-y: auto;
-  }
-  .case-page .project-details-container { height: auto; overflow: visible; padding-bottom: 0; }
+  .case-page .case-aside { top: min(6rem, 10dvh); }
 }
 
 @media (min-width: 840px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
@@ -133,7 +114,6 @@ body { height: auto; min-height: 100dvh; }
     scroll-snap-align: start;
   }
 
-  .profile-page .about-me { width: min(100dvw, 80rem); padding-inline: 1rem; }
 }
 
 @media (max-width: 999px) {
@@ -141,14 +121,8 @@ body { height: auto; min-height: 100dvh; }
 }
 
 @media (max-width: 768px) {
+  .profile-page .education-title { font-size: 5.5rem; }
   .profile-page .First-section h1 { font-size: clamp(4rem, 16.5vw, 8rem); }
-  .profile-page .about-me-image { height: auto; flex: none; }
-  .profile-page .about-me-image img {
-    position: static;
-    width: min(100%, 26rem);
-    height: auto;
-    margin-inline: auto;
-  }
   .portfolio-preview-header { align-items: flex-start; }
   .portfolio-site .skills-container { flex-direction: column; }
   .case-page .project-header-info h1 { overflow-wrap: anywhere; }
@@ -162,6 +136,7 @@ body { height: auto; min-height: 100dvh; }
 }
 
 @media (max-width: 485px) {
+  .profile-page .education-title { font-size: 4rem; }
   .profile-page .First-section h1 { font-size: clamp(3.25rem, 16.5vw, 4rem); }
   .profile-page .logo-main { max-width: 80%; }
   .profile-page .projects-container-preview > .show-on-mobile {

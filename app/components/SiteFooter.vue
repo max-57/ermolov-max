@@ -2,6 +2,8 @@
 import { profileContacts } from '~/content/profile'
 
 const { language, pathFor } = usePortfolioRouting()
+const contacts = ['mail', 'telegram', 'linkedin', 'phone']
+  .flatMap(name => profileContacts.filter(contact => contact.name === name))
 </script>
 
 <template>
@@ -16,12 +18,12 @@ const { language, pathFor } = usePortfolioRouting()
         <NuxtLink class="footer-contact-item" :to="pathFor('portfolio')">{{ language === 'en' ? 'Portfolio' : 'Портфолио' }}</NuxtLink>
       </div>
       <div class="footer-content">
-        <a v-for="contact in profileContacts" :key="contact.name" class="footer-contact-item" :href="contact.href">
+        <a v-for="contact in contacts" :key="contact.name" class="footer-contact-item" :href="contact.href">
           <img :src="contact.icon" alt="">
           <span>{{ contact.label }}</span>
         </a>
       </div>
     </div>
-    <div class="footer-bottom"><p>© 2026 · Maxim Ermolov</p></div>
+    <div class="footer-bottom"><p>© 2026 • Maxim Ermolov</p></div>
   </footer>
 </template>
