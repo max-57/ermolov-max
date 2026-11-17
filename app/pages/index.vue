@@ -4,7 +4,7 @@ import { projects } from '~/content/projects'
 
 const { language, pathFor } = usePortfolioRouting()
 const copy = computed(() => profile[language.value])
-const selected = ['lesson-space', 'fintech', 'quests'].flatMap(slug => projects.filter(project => project.slug === slug))
+const selected = ['lesson-space', 'fintech', 'logistic', 'quests'].flatMap(slug => projects.filter(project => project.slug === slug))
 const specialties = ['Figma', 'Variables', 'Design Systems', 'Prototyping', 'HTML', 'CSS', 'JavaScript', 'Vue/Nuxt', 'Git', 'Codex']
 useSeoMeta({
   title: () => language.value === 'en' ? 'Maxim Ermolov · Product Designer' : 'Максим Ермолов · Продуктовый дизайнер',
@@ -17,15 +17,9 @@ useSeoMeta({
     <section class="First-section" aria-labelledby="profile-title">
       <img v-magnetic="0.5" :src="'/images/Logo.svg'" alt="" class="logo-main" fetchpriority="high">
       <div class="header">
-        <p class="hero-name">{{ language === 'en' ? 'Maxim Ermolov' : 'Максим Ермолов' }}</p>
-        <h1 id="profile-title">{{ copy.role }}</h1>
+        <h1 id="profile-title" lang="en">PRODUCT DESIGNER</h1>
         <p class="profile-focus">{{ copy.focus }}</p>
-        <div class="hero-actions">
-          <NuxtLink v-magnetic :to="pathFor('portfolio')" class="btn hero-primary">
-            {{ language === 'en' ? 'View work' : 'Смотреть работы' }} <span aria-hidden="true">→</span>
-          </NuxtLink>
-          <a v-magnetic :href="resumeUrl" class="btn">{{ copy.resumeLabel }}</a>
-        </div>
+        <a v-magnetic :href="resumeUrl" class="btn"><span>{{ copy.resumeLabel }}</span></a>
       </div>
     </section>
 
@@ -51,23 +45,13 @@ useSeoMeta({
       </div>
     </section>
 
-    <section class="portfolio-preview">
-      <div class="portfolio-preview-header">
-        <h2>{{ copy.selectedWorkTitle }}</h2>
-        <NuxtLink v-magnetic :to="pathFor('portfolio')" class="btn">{{ copy.seeAllWorkLabel }}</NuxtLink>
-      </div>
-      <div class="projects-container-preview">
-        <ProjectCard v-for="project in selected" :key="project.slug" :project="project" />
-      </div>
-    </section>
-
     <section class="experience">
       <div class="experience-title">
         <h2>{{ copy.experienceTitle }}</h2>
         <p class="experience-amount">{{ copy.experienceAmount }}</p>
       </div>
       <div class="experience-text">
-        <details v-for="(job, index) in copy.jobs" :key="job.company" class="profile-job" :open="index === 0">
+        <details v-for="job in copy.jobs" :key="job.company" class="accordion-item profile-job">
           <summary><strong>{{ job.role }}</strong><span>{{ job.company }} · {{ job.dates }}</span></summary>
           <ul class="job-highlights">
             <li v-for="highlight in job.highlights" :key="highlight.title"><strong>{{ highlight.title }}</strong> {{ highlight.description }}</li>
@@ -91,6 +75,17 @@ useSeoMeta({
             </ul>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="portfolio-preview">
+      <div class="portfolio-preview-header">
+        <h2>{{ copy.selectedWorkTitle }}</h2>
+        <NuxtLink v-magnetic :to="pathFor('portfolio')" class="btn hide-on-mobile">{{ copy.seeAllWorkLabel }}</NuxtLink>
+      </div>
+      <div class="projects-container-preview">
+        <ProjectCard v-for="project in selected" :key="project.slug" :project="project" />
+        <NuxtLink :to="pathFor('portfolio')" class="btn show-on-mobile rotate-90">{{ copy.seeAllWorkLabel }}</NuxtLink>
       </div>
     </section>
 

@@ -134,7 +134,7 @@ body {
 
 h1 {
     font-size: 8rem;
-    font-weight: 800;
+    font-weight: 700;
     margin: 0;
     line-height: 90%;
 }
@@ -1238,55 +1238,11 @@ li {
         color 0.4s ease;
 }
 
-/* 1. Эффект "Ртутной волны" (Заливка) */
-.btn::before {
-    content: '';
-    position: absolute;
-    top: 100%; /* Начинаем снизу */
-    left: 50%;
-    width: 150%;
-    aspect-ratio: 1/1;
-    background: #fff;
-    border-radius: 42%; /* Округлая органика */
-    transform: translate(-50%, 0%) scale(0);
-    transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-    mix-blend-mode: difference;
-    z-index: 1;
-}
-
-/* 2. Световой блик (Shine) */
-.btn::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(
-        to right,
-        transparent,
-        rgba(255, 255, 255, 0.15),
-        transparent
-    );
-    transform: skewX(-25deg);
-    z-index: 2;
-}
-
-/* Состояния Hover */
-.btn:hover {
-    color: #000; /* Цвет текста станет черным из-за mix-blend или явно */
-    border-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 10px 30px -5px var(--glow-color);
-    transform: translateY(-3px);
-}
-
-.btn:hover::before {
-    transform: translate(-50%, -75%) scale(1.5);
-}
-
-.btn:hover::after {
-    left: 150%;
-    transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+@media (hover: hover) {
+    .btn:hover {
+        background-color: var(--background-card);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
 }
 
 /* Контент внутри (Текст и SVG) */
