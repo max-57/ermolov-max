@@ -21,29 +21,6 @@ window.addEventListener('DOMContentLoaded', () => {
     navigate(targetPage);
 });
 
-// Глобальный перехват всех кликов по ссылкам
-document.addEventListener('click', (e) => {
-    const link = e.target.closest('a');
-    if (!link) return;
-
-    const href = link.getAttribute('href');
-
-    // Если ссылка начинается на http или mailto — это внешний переход
-    if (href.startsWith('http') || href.startsWith('mailto')) return;
-
-    // Если это внутренняя ссылка
-    e.preventDefault();
-    
-    // Очищаем href от #
-    const pageId = href.replace('#', '');
-    
-    // Меняем URL в браузере БЕЗ перезагрузки
-    window.history.pushState({ pageId }, '', `#${pageId}`);
-    
-    // Грузим контент
-    navigate(pageId);
-});
-
 // Получить текущий язык (по умолчанию 'ru')
 function getCurrentLang() {
     return localStorage.getItem('preferred_lang') || 'ru';
@@ -222,7 +199,9 @@ document.addEventListener('click', (e) => {
 function initSPA() {
     // Перехват кликов по меню и логотипу
     document.addEventListener('click', (e) => {
-        // 1. Сначала ищем специфичные кнопки (Назад)
+        if (e.defaultPrevented || e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+
+        // Кнопка «Назад» использует историю браузера.
         const backBtn = e.target.closest('.btn-back');
         if (backBtn) {
             e.preventDefault();
@@ -230,13 +209,15 @@ function initSPA() {
             return; // ВАЖНО: выходим, чтобы не сработал код ниже
         }
 
+        const link = e.target.closest('a[href]');
+        if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+
+        const pageId = link.getAttribute('href').replace(/^#/, '');
+        if (!/^[a-z0-9-]+$/.test(pageId)) return;
 
         e.preventDefault();
-        const pageId = target.getAttribute('href');
-        if (pageId) {
-            window.history.pushState({ pageId }, '', `#${pageId}`);
-            navigate(pageId);
-        }
+        window.history.pushState({ pageId }, '', `#${pageId}`);
+        navigate(pageId);
     });
 
     // Кнопки "Назад/Вперед" в браузере
@@ -584,8 +565,14 @@ function initMagneticButtons() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Просто запускаем анимацию
-    lottie.loadAnimation({
+    const preloader = document.getElementById('preloader');
+    if (!preloader) return;
+    if (!window.lottie) {
+        preloader.remove();
+        return;
+    }
+
+    window.lottie.loadAnimation({
         container: document.getElementById('lottie-logo'),
         renderer: 'svg',
         loop: false,
