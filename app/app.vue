@@ -31,6 +31,7 @@ useHead(() => ({
 
 <template>
   <div class="portfolio-site">
+    <SitePreloader />
     <a class="skip-link" href="#main-content">{{ language === 'en' ? 'Skip to content' : 'К содержанию' }}</a>
     <div class="bg-mesh" :style="backdrop" aria-hidden="true">
       <div class="blob blob-1" />
