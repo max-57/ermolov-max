@@ -92,8 +92,8 @@ body { height: auto; min-height: 100dvh; }
 }
 
 .profile-page .First-section h1 {
-  max-width: 10ch;
-  font-size: clamp(3rem, 8.5vw, 8rem);
+  max-width: 100%;
+  font-size: clamp(3rem, 7.4vw, 6.65rem);
   font-weight: 800;
   line-height: 0.92;
   letter-spacing: -0.055em;
@@ -269,6 +269,16 @@ body { height: auto; min-height: 100dvh; }
 .error-page { padding-top: 3rem; }
 .error-page button { align-self: flex-start; cursor: pointer; font: inherit; }
 
+@media (min-width: 840px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .portfolio-site .magnetic-hover {
+    translate: var(--magnetic-shift, 0 0);
+    rotate: var(--magnetic-rotation, none);
+    transition-property: translate, rotate, transform, color, background-color, border-color, box-shadow, filter;
+    transition-duration: 0.3s;
+    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+}
+
 @media (max-width: 999px) {
   .portfolio-site .projects-container,
   .portfolio-site .projects-container-preview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -301,6 +311,9 @@ body { height: auto; min-height: 100dvh; }
   .site-navbar .logo,
   .site-navbar .social-icons { display: none; }
   .site-navbar .nav-pill-item { padding-inline: 0.65rem; }
+  .profile-page .First-section h1 { font-size: clamp(2.15rem, 10.5vw, 3.5rem); }
+  .hero-actions { gap: 0.5rem; }
+  .hero-actions .btn { padding: 0.7rem 1rem; font-size: 0.9rem; }
   .portfolio-site .projects-container,
   .portfolio-site .projects-container-preview { grid-template-columns: 1fr; }
 }
