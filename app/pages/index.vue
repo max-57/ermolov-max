@@ -5,7 +5,10 @@ import { projects, type Language } from '~/content/projects'
 const { language, pathFor } = usePortfolioRouting()
 const copy = computed(() => profile[language.value])
 const openJob = ref<number>()
-const experienceCounter = ref(copy.value.experienceAmount)
+const experienceAmount = ref(copy.value.experienceAmount)
+const experienceCounter = ref(experienceAmount.value)
+const experienceElement = useTemplateRef<HTMLElement>('experienceElement')
+const skillsDashboard = useTemplateRef<HTMLElement>('skillsDashboard')
 const specialties = ['Figma', 'Variables', 'Tokens', 'Design Systems', 'Prototyping', 'Components', 'HTML', 'CSS', 'JavaScript', 'Git', 'PhotoShop', 'Illustrator', 'Blender', 'DaVinci Resolve']
 
 const skillCards = computed(() => [
@@ -48,11 +51,73 @@ const selected = computed(() => featured[language.value].flatMap(({ slug, cover,
   return project ? [{ ...project, cover, [language.value]: { ...project[language.value], ...card } }] : []
 }))
 
+let stopCounters: (() => void) | undefined
+
 onMounted(() => {
   const today = new Date()
   const months = Math.max(0, (today.getFullYear() - 2022) * 12 + today.getMonth() - 5 - Number(today.getDate() < 17))
-  experienceCounter.value = `${Math.floor(months / 12)}.${String(months % 12).padStart(2, '0')}`
+  function formatExperience(value: number) {
+    return `${Math.floor(value / 12)}.${String(value % 12).padStart(2, '0')}`
+  }
+  experienceAmount.value = experienceCounter.value = formatExperience(months)
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || typeof IntersectionObserver === 'undefined') return
+
+  const counters = new Map<Element, { setVisible: (visible: boolean) => void; stop: () => void }>()
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) counters.get(entry.target)?.setVisible(entry.intersectionRatio >= 0.1)
+  }, { threshold: 0.1 })
+
+  function observeCounter(target: HTMLElement, duration: number, update: (progress: number) => void, showBar?: (visible: boolean) => void) {
+    let frame = 0
+    const stop = () => cancelAnimationFrame(frame)
+    counters.set(target, {
+      stop,
+      setVisible(visible) {
+        stop()
+        showBar?.(visible)
+        update(0)
+        if (!visible) return
+
+        const start = performance.now()
+        const tick = (now: number) => {
+          const progress = Math.min((now - start) / duration, 1)
+          update(progress)
+          if (progress < 1) frame = requestAnimationFrame(tick)
+        }
+        frame = requestAnimationFrame(tick)
+      },
+    })
+    update(0)
+    observer.observe(target)
+  }
+
+  if (experienceElement.value) {
+    observeCounter(experienceElement.value, 2500, (progress) => {
+      const elapsedMonths = Math.floor(months * (1 - (1 - progress) ** 3))
+      experienceCounter.value = formatExperience(elapsedMonths)
+    })
+  }
+
+  for (const metric of skillsDashboard.value?.querySelectorAll<HTMLElement>('[data-score]') ?? []) {
+    const bar = metric.querySelector<HTMLElement>('.progress-wrapper')
+    const value = metric.querySelector<HTMLElement>('.metric-value')
+    if (!bar || !value) continue
+
+    const score = Number(metric.dataset.score)
+    metric.classList.add('metric-animated')
+    observeCounter(bar, 1500, (progress) => {
+      value.textContent = `${Math.round(score * progress)}%`
+    }, visible => metric.classList.toggle('metric-revealed', visible))
+  }
+
+  stopCounters = () => {
+    observer.disconnect()
+    for (const { stop } of counters.values()) stop()
+  }
 })
+
+onBeforeUnmount(() => stopCounters?.())
 
 useSeoMeta({
   title: () => language.value === 'en' ? 'Maxim Ermolov · Product Designer' : 'Максим Ермолов · Продуктовый дизайнер',
@@ -96,7 +161,8 @@ useSeoMeta({
     <section class="experience" aria-labelledby="experience-title">
       <div class="experience-title">
         <h2 id="experience-title">{{ copy.experienceTitle.toLocaleUpperCase(language) }}</h2>
-        <p id="experience-counter" class="experience-counter">{{ experienceCounter }}</p>
+        <p id="experience-counter" ref="experienceElement" class="experience-counter" aria-hidden="true">{{ experienceCounter }}</p>
+        <span class="visually-hidden">{{ experienceAmount }}</span>
       </div>
       <div class="experience-text">
         <div class="accordion">
@@ -126,15 +192,19 @@ useSeoMeta({
       </div>
     </section>
 
-    <section class="skills-dashboard" aria-labelledby="skills-heading">
+    <section ref="skillsDashboard" class="skills-dashboard" aria-labelledby="skills-heading">
       <h2 id="skills-heading" class="visually-hidden">{{ language === 'en' ? 'Skills' : 'Навыки' }}</h2>
       <div class="skills-container">
         <div v-for="card in skillCards" :key="card.kind" class="skill-card" :class="card.kind">
           <span class="card-label">{{ card.label }}</span>
-          <div v-for="group in card.items" :key="group.name" class="metric-item">
+          <div v-for="(group, index) in card.items" :key="index" class="metric-item" :data-score="'score' in group ? group.score : undefined">
             <div class="metric-info">
               <h3>{{ group.name }}</h3>
-              <span class="metric-value">{{ 'level' in group ? group.level : `${group.score}%` }}</span>
+              <span v-if="'level' in group" class="metric-value">{{ group.level }}</span>
+              <template v-else>
+                <span class="metric-value" aria-hidden="true">{{ group.score }}%</span>
+                <span class="visually-hidden">{{ group.score }}%</span>
+              </template>
             </div>
             <div v-if="'score' in group" class="progress-wrapper" aria-hidden="true">
               <div class="progress-bar" :style="{ width: `${group.score}%` }" />
@@ -175,3 +245,16 @@ useSeoMeta({
     </section>
   </div>
 </template>
+
+<style scoped>
+.metric-animated .progress-bar {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: none;
+}
+
+.metric-revealed .progress-bar {
+  transform: scaleX(1);
+  transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+</style>
