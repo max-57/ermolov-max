@@ -1,4 +1,4 @@
-html { overflow: visible; }
+html { overflow: visible; scroll-behavior: auto; }
 body { height: auto; min-height: 100dvh; }
 
 .portfolio-site { position: relative; isolation: isolate; }
@@ -37,6 +37,25 @@ body { height: auto; min-height: 100dvh; }
 .profile-page .First-section h1 { overflow-wrap: anywhere; }
 .profile-focus { color: var(--font-color-secondary); font-size: 2rem; font-weight: 500; }
 .profile-page .marquee-list { white-space: nowrap; }
+.profile-page .about-me {
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  height: auto;
+  padding-block: 1rem;
+}
+.profile-page .about-me-image {
+  width: 50%;
+  min-width: 0;
+  height: auto;
+}
+.profile-page .about-me-image img {
+  position: static;
+  display: block;
+  width: min(100%, 36rem);
+  height: auto;
+  object-fit: contain;
+  margin-inline: auto;
+}
 .profile-page .about-me-text p { color: var(--font-color-secondary); }
 .profile-page .experience { width: 100%; }
 .profile-page .portfolio-preview { width: 100%; max-width: 80rem; }
@@ -121,6 +140,7 @@ body { height: auto; min-height: 100dvh; }
 }
 
 @media (max-width: 768px) {
+  .profile-page .about-me-image { width: 100%; }
   .profile-page .education-title { font-size: 5.5rem; }
   .profile-page .First-section h1 { font-size: clamp(4rem, 16.5vw, 8rem); }
   .portfolio-preview-header { align-items: flex-start; }
