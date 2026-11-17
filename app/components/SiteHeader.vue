@@ -11,7 +11,7 @@ const names = {
 
 <template>
   <nav class="navbar-frame site-navbar" :aria-label="names[language].nav">
-    <NuxtLink v-if="isProject" :to="pathFor('portfolio')" class="btn btn-back">
+    <NuxtLink v-if="isProject" v-magnetic :to="pathFor('portfolio')" class="btn btn-back">
       <span aria-hidden="true">←</span> {{ names[language].back }}
     </NuxtLink>
     <template v-else>

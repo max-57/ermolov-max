@@ -18,11 +18,11 @@ useSeoMeta({
   <article class="project-page case-page">
     <header class="project-hero">
       <div class="project-header-info">
-        <img v-if="project.cover" :src="project.cover" alt="" class="project-cover" decoding="async">
         <span class="card-label">{{ copy.label }}</span>
         <h1>{{ copy.title }}</h1>
         <p class="project-subtitle">{{ copy.description }}</p>
       </div>
+      <img v-if="project.cover" v-magnetic="0.025" :src="project.cover" alt="" class="project-cover" decoding="async" fetchpriority="high">
     </header>
 
     <div class="case-body" :class="{ 'project-grid-content': copy.details?.length || project.tags?.length }">
@@ -43,11 +43,11 @@ useSeoMeta({
           <p v-if="section.text" class="case-text">{{ section.text }}</p>
           <template v-for="media in section.media" :key="media.src">
             <video v-if="media.video" :src="media.src" :aria-label="media.alt" controls playsinline preload="none" />
-            <img v-else :src="media.src" :alt="media.alt" loading="lazy" decoding="async">
+            <img v-else v-magnetic="0.025" :src="media.src" :alt="media.alt" loading="lazy" decoding="async">
           </template>
         </section>
       </div>
     </div>
-    <NuxtLink :to="pathFor('portfolio')" class="btn case-back">{{ language === 'en' ? 'All work' : 'Все работы' }}</NuxtLink>
+    <NuxtLink v-magnetic :to="pathFor('portfolio')" class="btn case-back">{{ language === 'en' ? 'All work' : 'Все работы' }}</NuxtLink>
   </article>
 </template>

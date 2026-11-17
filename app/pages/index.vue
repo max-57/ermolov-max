@@ -14,18 +14,24 @@ useSeoMeta({
 
 <template>
   <div class="content-wrapper profile-page">
-    <section class="First-section">
-      <img :src="'/images/Logo.svg'" alt="" class="logo-main" fetchpriority="high">
+    <section class="First-section" aria-labelledby="profile-title">
+      <img v-magnetic="0.5" :src="'/images/Logo.svg'" alt="" class="logo-main" fetchpriority="high">
       <div class="header">
-        <h1>{{ copy.role }}</h1>
+        <p class="hero-name">{{ language === 'en' ? 'Maxim Ermolov' : 'Максим Ермолов' }}</p>
+        <h1 id="profile-title">{{ copy.role }}</h1>
         <p class="profile-focus">{{ copy.focus }}</p>
-        <a :href="resumeUrl" class="btn">{{ copy.resumeLabel }}</a>
+        <div class="hero-actions">
+          <NuxtLink v-magnetic :to="pathFor('portfolio')" class="btn hero-primary">
+            {{ language === 'en' ? 'View work' : 'Смотреть работы' }} <span aria-hidden="true">→</span>
+          </NuxtLink>
+          <a v-magnetic :href="resumeUrl" class="btn">{{ copy.resumeLabel }}</a>
+        </div>
       </div>
     </section>
 
     <div class="marquee-wrapper">
       <div class="marquee-track">
-        <div v-for="repeat in 2" :key="repeat" class="marquee-list" :aria-hidden="repeat === 2 ? 'true' : undefined">
+        <div v-for="repeat in 3" :key="repeat" class="marquee-list" :aria-hidden="repeat > 1 ? 'true' : undefined">
           <span v-for="skill in specialties" :key="skill" class="skill">{{ skill }}</span>
         </div>
       </div>
@@ -42,6 +48,16 @@ useSeoMeta({
             <img :src="'/images/Me.png'" alt="" loading="lazy" decoding="async">
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="portfolio-preview">
+      <div class="portfolio-preview-header">
+        <h2>{{ copy.selectedWorkTitle }}</h2>
+        <NuxtLink v-magnetic :to="pathFor('portfolio')" class="btn">{{ copy.seeAllWorkLabel }}</NuxtLink>
+      </div>
+      <div class="projects-container-preview">
+        <ProjectCard v-for="project in selected" :key="project.slug" :project="project" />
       </div>
     </section>
 
@@ -71,20 +87,10 @@ useSeoMeta({
               <span v-if="'level' in group" class="metric-value">{{ group.level }}</span>
             </div>
             <ul v-if="group.tags.length" class="tag-group tag-list">
-              <li v-for="tag in group.tags" :key="tag" class="tag">{{ tag }}</li>
+              <li v-for="tag in group.tags" :key="tag" v-magnetic="0.25" class="tag">{{ tag }}</li>
             </ul>
           </div>
         </div>
-      </div>
-    </section>
-
-    <section class="portfolio-preview">
-      <div class="portfolio-preview-header">
-        <h2>{{ copy.selectedWorkTitle }}</h2>
-        <NuxtLink :to="pathFor('portfolio')" class="btn">{{ copy.seeAllWorkLabel }}</NuxtLink>
-      </div>
-      <div class="projects-container-preview">
-        <ProjectCard v-for="project in selected" :key="project.slug" :project="project" />
       </div>
     </section>
 
@@ -95,7 +101,7 @@ useSeoMeta({
           <h3>{{ item.institution }}</h3>
           <p>{{ item.degree }} · {{ item.dates }}</p>
           <ul class="tag-group tag-list">
-            <li v-for="detail in item.details" :key="detail" class="tag">{{ detail }}</li>
+            <li v-for="detail in item.details" :key="detail" v-magnetic="0.25" class="tag">{{ detail }}</li>
           </ul>
         </div>
       </div>
