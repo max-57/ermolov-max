@@ -4,7 +4,6 @@ export function canonicalSlug(slug: string) {
   switch (slug) {
     case 'about-me': return ''
     case 'logistics': return 'ai-logistic'
-    case 'quest-saas': return 'quests'
     default: return slug
   }
 }

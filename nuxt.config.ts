@@ -1,6 +1,6 @@
 import { projects } from './app/content/projects'
 
-const paths = ['', 'portfolio', 'reviews', 'about-me', 'logistics', 'quest-saas', ...projects.map(project => project.slug)]
+const paths = ['', 'portfolio', 'reviews', 'about-me', 'logistics', ...projects.map(project => project.slug)]
 
 export default defineNuxtConfig({
   compatibilityDate: '2026-11-17',
@@ -33,7 +33,6 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
-    publicAssets: [{ dir: '~~/images', baseURL: '/images' }],
     prerender: {
       routes: paths.flatMap(slug => [`/${slug}`, slug ? `/en/${slug}` : '/en']),
       failOnError: true,

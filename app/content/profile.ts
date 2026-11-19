@@ -70,7 +70,6 @@ export const profile: Record<'ru' | 'en', Profile> = {
         dates: '10.2025 — Настоящее время',
         highlights: [
           { title: 'ИИ-логистика', description: 'Спроектировал архитектуру и UX интерфейса управления автопарком с ИИ, перевёл сложные операционные данные в понятные рабочие сценарии.' },
-          { title: 'Строительный финтех', description: 'Спроектировал работу со сметами и финансовыми данными, включая многоуровневое редактирование и каскадное обновление моделей.' },
           { title: 'White-label дизайн-система', description: 'Создал дизайн-систему на токенах и переменных для смены брендинга платформы.' },
           { title: 'Работа с разработкой', description: 'Передавал макеты и проверял, как они реализованы.' },
         ],
@@ -80,8 +79,6 @@ export const profile: Record<'ru' | 'en', Profile> = {
         company: 'NomadicSoft (США/удалённо)',
         dates: '07.2025 — Настоящее время',
         highlights: [
-          { title: '«Паника»', description: 'Спроектировал админку для управления партнёрской сетью квест-площадок. С нуля создал дизайн-систему админки и реализовал её в коде.' },
-          { title: 'Операционные сценарии', description: 'Работал над интерфейсами бронирований, ролевого доступа, биллинга, автоплатежей и документооборота.' },
           { title: 'Клиентская часть', description: 'Делаю редизайн и обновляю вёрстку публичных страниц.' },
         ],
       },
@@ -141,7 +138,6 @@ export const profile: Record<'ru' | 'en', Profile> = {
         dates: '10.2025 — Present',
         highlights: [
           { title: 'AI for logistics', description: 'Designed the architecture and UX of an AI-assisted fleet management interface, turning complex operations data into clear workflows.' },
-          { title: 'Construction fintech', description: 'Designed tools for working with cost estimates and financial data, including multi-level editing and cascading model updates.' },
           { title: 'White-label design system', description: 'Built a design system that uses tokens and variables to change the platform’s branding.' },
           { title: 'Engineering collaboration', description: 'Handed off designs and reviewed their implementation.' },
         ],
@@ -151,8 +147,6 @@ export const profile: Record<'ru' | 'en', Profile> = {
         company: 'NomadicSoft (USA/Remote)',
         dates: '07.2025 — Present',
         highlights: [
-          { title: 'Panika', description: 'Designed an admin interface for the company’s network of escape room partners. Created its design system from scratch and implemented it in code.' },
-          { title: 'Operations workflows', description: 'Worked on interfaces for bookings, role-based access, billing, automatic payments and document management.' },
           { title: 'Customer-facing website', description: 'I’m redesigning the public pages and updating their frontend implementation.' },
         ],
       },
