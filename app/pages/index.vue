@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { profile, resumeUrl } from '~/content/profile'
-import { projects, type Language } from '~/content/projects'
+import { projects } from '~/content/projects'
 
 const { language, pathFor } = usePortfolioRouting()
 const copy = computed(() => profile[language.value])
@@ -32,24 +32,7 @@ const skillCards = computed(() => [
   },
 ])
 
-const featured: Record<Language, { slug: string; cover?: string; label: string; title: string; description: string }[]> = {
-  ru: [
-    { slug: 'lesson-space', label: 'EDTECH · СОБСТВЕННЫЙ MVP', title: 'Lesson Space', description: 'Сам спроектировал и собрал комнату онлайн-занятия со звонком, совместной доской и интерактивными заданиями.' },
-    { slug: 'fintech', cover: '/images/fintech-case-cover.png', label: '// FINTECH • ENTERPRISE', title: 'Строительный Fintech', description: 'Разработка ядра системы управления сметами с автоматизацией каскадных обновлений и сложной аналитикой.' },
-    { slug: 'logistic', cover: '/images/logistic-case-cover.png', label: '// B2B ЛОГИСТИЧЕСКАЯ ПЛАТФОРМА', title: 'Цифровизация процессов грузоперевозок', description: 'Оптимизация взаимодействия между администраторами, логистами и водителями через автоматизацию документооборота и прозрачный мониторинг маршрутов.' },
-    { slug: 'quests', cover: '/images/quests-case-cover.png', label: '// B2B • SAAS • ENTERTAINMENT', title: 'B2B SaaS для квестов', description: 'Единый центр управления партнерской сетью игровых локаций, бронированиями и автоматизацией работы персонала.' },
-  ],
-  en: [
-    { slug: 'lesson-space', label: 'EDTECH · INDEPENDENT MVP', title: 'Lesson Space', description: 'I designed and built an online lesson room with video calls, a collaborative whiteboard and interactive exercises.' },
-    { slug: 'fintech', cover: '/images/fintech-case-cover.png', label: '// FINTECH • ENTERPRISE', title: 'Construction Fintech', description: 'Developing the core cost management engine with automated cascade updates and heavy analytics.' },
-    { slug: 'ai-logistic', cover: '/images/logistics-case-cover.png', label: '// AI • LOGISTICS • MOBILE', title: 'AI Logistics Optimizer', description: 'Fleet management system with an AI assistant for predictive expense analysis and procurement optimization.' },
-    { slug: 'quests', cover: '/images/quests-case-cover.png', label: '// B2B • SAAS • ENTERTAINMENT', title: 'B2B SaaS for Quests', description: 'All-in-one control center for escape room networks, bookings management, and staff automation.' },
-  ],
-}
-const selected = computed(() => featured[language.value].flatMap(({ slug, cover, ...card }) => {
-  const project = projects.find(item => item.slug === slug)
-  return project ? [{ ...project, cover, [language.value]: { ...project[language.value], ...card } }] : []
-}))
+const selected = projects.slice(0, 4)
 
 let stopCounters: (() => void) | undefined
 

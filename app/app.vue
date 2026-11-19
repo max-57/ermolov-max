@@ -4,12 +4,10 @@ import '~/assets/nuxt.css'
 const { language, slug, pathFor } = usePortfolioRouting()
 const palettes: Record<string, [string, string, string]> = {
   portfolio: ['#46bd2c', '#1a9a1e', '#aa6812'],
-  fintech: ['#6d7372', '#788381', '#565757'],
-  quests: ['#856100', '#aa800d', '#bb720c'],
+  golf: ['#324a15', '#1f3224', '#514715'],
   kpd: ['#4fac50', '#db7a03', '#bbbb0c'],
   logistic: ['#046959', '#024138', '#9c8000'],
   restaurant: ['#671c2d', '#4b2222', '#610118'],
-  barber: ['#275ff4', '#580a0a', '#032fa7'],
 }
 const backdrop = computed(() => {
   const [first, second, third] = palettes[slug.value] ?? ['#321459', '#042552', '#580952']

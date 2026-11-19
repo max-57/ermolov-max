@@ -6,7 +6,7 @@ const { language, pathFor } = usePortfolioRouting()
 </script>
 
 <template>
-  <NuxtLink v-magnetic="0.05" :to="pathFor(project.slug)" class="project-card" :class="{ 'project-card--text': !project.cover }">
+  <NuxtLink v-magnetic="0.05" :to="pathFor(project.slug)" class="project-card" :class="{ 'project-card--text': !project.cover, 'project-card--golf': project.slug === 'golf' }">
     <div v-if="project.cover" class="card-preview">
       <img :src="project.cover" alt="" loading="lazy" decoding="async">
     </div>
