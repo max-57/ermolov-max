@@ -1,6 +1,7 @@
 <script setup lang="ts">
 interface LottieAnimation {
-  addEventListener(event: 'data_failed', listener: () => void): void
+  addEventListener(event: 'data_failed' | 'complete', listener: () => void): void
+  setSpeed(speed: number): void
   destroy(): void
 }
 
@@ -15,15 +16,20 @@ interface LottiePlayer {
   }): LottieAnimation
 }
 
-const logo = ref<HTMLElement | null>(null)
-const visible = ref(true)
+const route = useRoute()
+const logo = useTemplateRef<HTMLElement>('logo')
+const visible = ref(false)
 let timer: number | undefined
+let startTimer: number | undefined
 let script: HTMLScriptElement | undefined
 let animation: LottieAnimation | undefined
+let stopped = false
 
 function dismiss() {
+  stopped = true
   visible.value = false
   window.clearTimeout(timer)
+  window.clearTimeout(startTimer)
   if (script) {
     script.onload = null
     script.onerror = null
@@ -35,18 +41,25 @@ function dismiss() {
   current?.destroy()
 }
 
-onMounted(() => {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    dismiss()
-    return
-  }
+watch(() => route.path, dismiss)
 
+onMounted(() => {
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
+  if (motion.matches) return
+  try {
+    if (sessionStorage.getItem('max-portfolio-intro')) return
+    sessionStorage.setItem('max-portfolio-intro', 'seen')
+  } catch {
+    // The intro still works when session storage is disabled.
+  }
   const lottieWindow = window as Window & { lottie?: LottiePlayer }
-  const play = () => {
-    if (!visible.value || !logo.value || !lottieWindow.lottie) {
-      dismiss()
-      return
-    }
+
+  const play = async () => {
+    if (stopped || motion.matches || !lottieWindow.lottie) return
+    window.clearTimeout(timer)
+    visible.value = true
+    await nextTick()
+    if (stopped || !logo.value) return
 
     try {
       animation = lottieWindow.lottie.loadAnimation({
@@ -55,43 +68,57 @@ onMounted(() => {
         loop: false,
         autoplay: true,
         path: '/Logo_animation.json',
-        rendererSettings: { preserveAspectRatio: 'xMidYMid slice' },
+        rendererSettings: { preserveAspectRatio: 'xMidYMid meet' },
       })
+      animation.setSpeed(1.2)
       animation.addEventListener('data_failed', dismiss)
-      window.clearTimeout(timer)
-      timer = window.setTimeout(dismiss, 3630)
+      animation.addEventListener('complete', dismiss)
+      timer = window.setTimeout(dismiss, 3600)
     } catch {
       dismiss()
     }
   }
 
-  if (lottieWindow.lottie) {
-    play()
-    return
-  }
-
-  timer = window.setTimeout(dismiss, 3630)
-  script = document.createElement('script')
-  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js'
-  script.async = true
-  script.onload = play
-  script.onerror = dismiss
-  document.head.append(script)
+  startTimer = window.setTimeout(() => {
+    if (lottieWindow.lottie) {
+      void play()
+      return
+    }
+    script = document.createElement('script')
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js'
+    script.async = true
+    script.onload = play
+    script.onerror = dismiss
+    document.head.append(script)
+    timer = window.setTimeout(dismiss, 1800)
+  }, 200)
 })
 
 onBeforeUnmount(dismiss)
 </script>
 
 <template>
-  <div v-if="visible" id="preloader" aria-hidden="true">
-    <div id="lottie-logo" ref="logo" />
+  <div v-if="visible" class="site-signature" aria-hidden="true">
+    <div ref="logo" />
   </div>
 </template>
 
 <style scoped>
-#preloader { pointer-events: none; }
-
+.site-signature {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.site-signature > div {
+  width: clamp(9rem, 27vw, 16rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #121313 44%, #121313ed 61%, transparent 74%);
+}
 @media (prefers-reduced-motion: reduce) {
-  #preloader { display: none; }
+  .site-signature { display: none; }
 }
 </style>

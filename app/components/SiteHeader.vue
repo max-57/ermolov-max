@@ -1,42 +1,34 @@
 <script setup lang="ts">
-import { profileContacts } from '~/content/profile'
+import { profileContacts, resumeUrl } from '~/content/profile'
 
 const { language, slug, pathFor } = usePortfolioRouting()
-const isProject = computed(() => Boolean(slug.value && slug.value !== 'portfolio'))
+const email = profileContacts.find(contact => contact.name === 'mail')!.href
 const names = {
-  ru: { about: 'Обо мне', portfolio: 'Портфолио', nav: 'Основная навигация', back: 'Назад' },
-  en: { about: 'About me', portfolio: 'Portfolio', nav: 'Main navigation', back: 'Back' },
+  ru: { home: 'Главная', name: 'Максим Ермолов', portfolio: 'Проекты', nav: 'Основная навигация', contact: 'Связаться', resume: 'Резюме' },
+  en: { home: 'Home', name: 'Maxim Ermolov', portfolio: 'Work', nav: 'Main navigation', contact: 'Contact', resume: 'Résumé' },
 }
 </script>
 
 <template>
-  <nav class="site-navbar" :class="isProject ? 'back-and-lang' : 'navbar-frame'" :aria-label="names[language].nav">
-    <NuxtLink v-if="isProject" v-magnetic :to="pathFor('portfolio')" class="btn btn-back">
-      <span aria-hidden="true">←</span> {{ names[language].back }}
-    </NuxtLink>
-    <template v-else>
-      <span class="logo" aria-hidden="true"><img :src="'/images/Logo.svg'" alt="" class="logo-img"></span>
-      <div class="nav-menu-pill">
-        <NuxtLink :to="pathFor()" class="nav-pill-item" :class="{ active: !slug }" :aria-current="!slug ? 'page' : undefined">
-          {{ names[language].about }}
-        </NuxtLink>
-        <NuxtLink :to="pathFor('portfolio')" class="nav-pill-item" :class="{ active: slug === 'portfolio' }" :aria-current="slug === 'portfolio' ? 'page' : undefined">
+  <header class="site-header">
+    <nav class="site-header-inner" :aria-label="names[language].nav">
+      <NuxtLink :to="pathFor()" class="site-brand" :aria-label="names[language].home" :aria-current="!slug ? 'page' : undefined">
+        <img src="/images/Logo.svg" alt="" width="27" height="27">
+        <span>{{ names[language].name }}</span>
+      </NuxtLink>
+      <div class="site-nav-links">
+        <NuxtLink :to="pathFor('portfolio')" :class="{ active: Boolean(slug) && slug !== 'reviews' }" :aria-current="slug === 'portfolio' ? 'page' : undefined">
           {{ names[language].portfolio }}
         </NuxtLink>
+        <a :href="email">{{ names[language].contact }}</a>
+        <a :href="resumeUrl" class="site-nav-resume">{{ names[language].resume }}</a>
       </div>
-      <div class="social-icons">
-        <a v-for="contact in profileContacts" :key="contact.name" class="social-link" :href="contact.href" :aria-label="contact.label">
-          <img :src="contact.icon" alt="" class="nav-icon">
-        </a>
+      <div class="site-languages">
+        <NuxtLink v-for="lang in ['ru', 'en'] as const" :key="lang" :to="pathFor(slug, lang)" :lang="lang" :hreflang="lang"
+          :aria-current="lang === language ? 'true' : undefined" :aria-label="lang === 'ru' ? 'По-русски' : 'In English'">
+          {{ lang.toUpperCase() }}
+        </NuxtLink>
       </div>
-    </template>
-    <div class="lang-switcher-pill">
-      <NuxtLink v-for="lang in ['ru', 'en'] as const" :key="lang" :to="pathFor(slug, lang)" :lang="lang" :hreflang="lang"
-        class="lang-flag-wrapper" :class="{ active: lang === language }" :aria-current="lang === language ? 'true' : undefined"
-        :aria-label="lang === 'ru' ? 'По-русски' : 'In English'">
-        <img :src="`/images/flag-${lang}.svg`" alt="" class="flag-img">
-      </NuxtLink>
-    </div>
-  </nav>
-  <div class="navbar-bg" aria-hidden="true" />
+    </nav>
+  </header>
 </template>

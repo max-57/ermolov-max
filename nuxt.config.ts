@@ -1,11 +1,10 @@
 import { projects } from './app/content/projects'
 
-const paths = ['', 'portfolio', 'reviews', 'about-me', 'logistics', ...projects.map(project => project.slug)]
+const paths = ['', 'portfolio', 'reviews', 'about-me', 'logistics', 'quest-saas', ...projects.map(project => project.slug)]
 
 export default defineNuxtConfig({
   compatibilityDate: '2026-11-17',
   devtools: { enabled: false },
-  css: ['~~/Style.css'],
   hooks: {
     'pages:extend'(pages) {
       const english = pages.map((page) => {

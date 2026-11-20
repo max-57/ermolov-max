@@ -1,22 +1,26 @@
 <script setup lang="ts">
 import type { Project } from '~/content/projects'
 
-defineProps<{ project: Project }>()
+const props = withDefaults(defineProps<{ project: Project; featured?: boolean; headingLevel?: 2 | 3 }>(), {
+  headingLevel: 2,
+})
 const { language, pathFor } = usePortfolioRouting()
+const copy = computed(() => props.project[language.value])
 </script>
 
 <template>
-  <NuxtLink v-magnetic="0.05" :to="pathFor(project.slug)" class="project-card" :class="{ 'project-card--text': !project.cover, 'project-card--golf': project.slug === 'golf' }">
-    <div v-if="project.cover" class="card-preview">
-      <img :src="project.cover" alt="" loading="lazy" decoding="async">
+  <NuxtLink :to="pathFor(project.slug)" class="work-card"
+    :class="[`work-card--${project.slug}`, { 'work-card--featured': featured, 'work-card--text': !project.cover }]">
+    <div v-if="project.cover" class="work-card-media">
+      <img :src="project.cover" alt="" :loading="featured ? 'eager' : 'lazy'" decoding="async">
+      <img v-if="project.coverCompanion" :src="project.coverCompanion" alt="" loading="lazy" decoding="async">
     </div>
-    <div class="card-content">
-      <div class="card-heading">
-        <span class="card-label">{{ project[language].label }}</span>
-        <span class="card-arrow" aria-hidden="true">→</span>
+    <div class="work-card-copy">
+      <div class="work-card-body">
+        <p class="work-card-type">{{ copy.label }}</p>
+        <component :is="`h${headingLevel}`">{{ copy.title }}</component>
+        <p class="work-card-description">{{ copy.description }}</p>
       </div>
-      <h2 class="card-title">{{ project[language].title }}</h2>
-      <p class="card-excerpt">{{ project[language].description }}</p>
     </div>
   </NuxtLink>
 </template>
