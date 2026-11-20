@@ -1,29 +1,25 @@
 <script setup lang="ts">
-import { profileContacts } from '~/content/profile'
+import { profileContacts, resumeUrl } from '~/content/profile'
 
-const { language, pathFor } = usePortfolioRouting()
-const contacts = ['mail', 'telegram', 'linkedin', 'phone']
-  .flatMap(name => profileContacts.filter(contact => contact.name === name))
+const { language } = usePortfolioRouting()
+const english = computed(() => language.value === 'en')
+const email = profileContacts.find(contact => contact.name === 'mail')!
+const socials = profileContacts.filter(contact => contact.name === 'telegram' || contact.name === 'linkedin')
 </script>
 
 <template>
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <img :src="'/images/Logo.svg'" alt="" class="footer-logo">
-          <h3>{{ language === 'en' ? 'Maxim Ermolov' : 'Максим Ермолов' }}</h3>
-        </div>
-        <NuxtLink class="footer-contact-item" :to="pathFor()">{{ language === 'en' ? 'About me' : 'Обо мне' }}</NuxtLink>
-        <NuxtLink class="footer-contact-item" :to="pathFor('portfolio')">{{ language === 'en' ? 'Portfolio' : 'Портфолио' }}</NuxtLink>
+  <footer class="site-footer" aria-labelledby="contact-title">
+    <div class="site-footer-inner">
+      <div>
+        <h2 id="contact-title">{{ english ? 'Get in touch' : 'Связаться' }}</h2>
+        <p>{{ english ? 'Open to product design and design engineering roles. Ready to relocate.' : 'Рассматриваю роли продуктового дизайнера и Design Engineer. Готов к переезду.' }}</p>
       </div>
-      <div class="footer-content">
-        <a v-for="contact in contacts" :key="contact.name" class="footer-contact-item" :href="contact.href">
-          <img :src="contact.icon" alt="">
-          <span>{{ contact.label }}</span>
-        </a>
+      <a v-magnetic class="footer-email" :href="email.href">{{ email.label }}</a>
+      <div class="footer-links">
+        <a v-for="social in socials" :key="social.name" :href="social.href" class="text-link">{{ social.label }}</a>
+        <a :href="resumeUrl" class="text-link">{{ english ? 'Download CV' : 'Скачать резюме' }}</a>
       </div>
     </div>
-    <div class="footer-bottom"><p>© 2026 • Maxim Ermolov</p></div>
+    <p class="site-credit">© {{ new Date().getFullYear() }} {{ english ? 'Maxim Ermolov' : 'Максим Ермолов' }}</p>
   </footer>
 </template>

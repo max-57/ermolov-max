@@ -51,9 +51,9 @@ const visualTools = ['Blender', 'DaVinci Resolve', 'After Effects', 'Photoshop',
 
 export const profile: Record<'ru' | 'en', Profile> = {
   ru: {
-    role: 'Продуктовый дизайнер',
+    role: 'Продуктовый дизайнер и Design Engineer',
     focus: 'Design Engineer · B2B SaaS · EdTech',
-    intro: 'Продуктовый дизайнер с 4+ годами опыта в UX/UI. Проектирую B2B-интерфейсы, дизайн-системы и сценарии онлайн-обучения. Реализую интерфейсы на Vue/Nuxt и использую Codex для работы с UI-кодом. Готов к переезду.',
+    intro: 'Мне интересны задачи, где в интерфейсе сходятся разные роли и сложные правила. В B2B это дизайн-системы и рабочие процессы, в Lesson Space — доска, звонок и подготовка к уроку.',
     resumeLabel: 'Скачать резюме',
     aboutTitle: 'Обо мне',
     experienceTitle: 'Опыт работы',
@@ -119,9 +119,9 @@ export const profile: Record<'ru' | 'en', Profile> = {
     ],
   },
   en: {
-    role: 'Product Designer',
+    role: 'Product Designer & Design Engineer',
     focus: 'Design Engineer · B2B SaaS · EdTech',
-    intro: 'Product designer with 4+ years in UX/UI. I design B2B interfaces, design systems and online learning experiences. I build interfaces in Vue/Nuxt and use Codex to work with UI code. Open to relocation.',
+    intro: 'I’m drawn to products where different roles and complex rules meet in one interface. In B2B, that means design systems and workflows. In Lesson Space, it means the board, calls and lesson preparation.',
     resumeLabel: 'Download résumé',
     aboutTitle: 'About me',
     experienceTitle: 'Work experience',

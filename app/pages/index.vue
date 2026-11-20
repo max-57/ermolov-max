@@ -1,249 +1,110 @@
 <script setup lang="ts">
-import { profile, resumeUrl } from '~/content/profile'
+import { profile, profileContacts, resumeUrl } from '~/content/profile'
 import { projects } from '~/content/projects'
 
 const { language, pathFor } = usePortfolioRouting()
 const copy = computed(() => profile[language.value])
-const openJob = ref<number>()
-const experienceAmount = ref(copy.value.experienceAmount)
-const experienceCounter = ref(experienceAmount.value)
-const experienceElement = useTemplateRef<HTMLElement>('experienceElement')
-const skillsDashboard = useTemplateRef<HTMLElement>('skillsDashboard')
-const specialties = ['Figma', 'Variables', 'Tokens', 'Design Systems', 'Prototyping', 'Components', 'HTML', 'CSS', 'JavaScript', 'Git', 'PhotoShop', 'Illustrator', 'Blender', 'DaVinci Resolve']
-
-const skillCards = computed(() => [
-  {
-    kind: 'tools-card',
-    label: '// HARD SKILLS',
-    items: [
-      { name: 'Figma', score: 99, tags: ['Variables', 'Tokens', 'Design Systems', 'Prototyping'] },
-      { name: 'FrontEnd', score: 40, tags: [language.value === 'ru' ? 'Этот сайт, как пример' : 'This website, as an example', 'HTML', 'CSS', 'Vanilla JS', 'GIT'] },
-      { name: language.value === 'ru' ? 'Дизайн' : 'Design', score: 80, tags: ['Blender', 'DaVinci Resolve', 'After Effects', 'Photoshop', 'Illustrator'] },
-    ],
-  },
-  {
-    kind: 'metrics-card',
-    label: '// SOFT SKILLS',
-    items: [
-      { name: 'English', level: 'B1', tags: [] },
-      { name: 'Product Thinking', score: 85, tags: ['CJM', 'User Research', 'A/B Testing', 'Competitor Analysis'] },
-      { name: 'Problem Solving', score: 80, tags: ['Critical Thinking', 'Analytical Skills', 'Adaptability', 'Solution-Focused'] },
-    ],
-  },
-])
-
-const selected = projects.slice(0, 4)
-
-let stopCounters: (() => void) | undefined
+const featured = projects.slice(0, 2)
+const email = profileContacts.find(contact => contact.name === 'mail')!.href
+const english = computed(() => language.value === 'en')
+const profileFacts = useTemplateRef<HTMLElement>('profileFacts')
+const factsVisible = ref(false)
+let factsObserver: IntersectionObserver | undefined
 
 onMounted(() => {
-  const today = new Date()
-  const months = Math.max(0, (today.getFullYear() - 2022) * 12 + today.getMonth() - 5 - Number(today.getDate() < 17))
-  function formatExperience(value: number) {
-    return `${Math.floor(value / 12)}.${String(value % 12).padStart(2, '0')}`
-  }
-  experienceAmount.value = experienceCounter.value = formatExperience(months)
-
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || typeof IntersectionObserver === 'undefined') return
-
-  const counters = new Map<Element, { setVisible: (visible: boolean) => void; stop: () => void }>()
-  const observer = new IntersectionObserver((entries) => {
-    for (const entry of entries) counters.get(entry.target)?.setVisible(entry.intersectionRatio >= 0.1)
-  }, { threshold: 0.1 })
-
-  function observeCounter(target: HTMLElement, duration: number, update: (progress: number) => void, showBar?: (visible: boolean) => void) {
-    let frame = 0
-    const stop = () => cancelAnimationFrame(frame)
-    counters.set(target, {
-      stop,
-      setVisible(visible) {
-        stop()
-        showBar?.(visible)
-        update(0)
-        if (!visible) return
-
-        const start = performance.now()
-        const tick = (now: number) => {
-          const progress = Math.min((now - start) / duration, 1)
-          update(progress)
-          if (progress < 1) frame = requestAnimationFrame(tick)
-        }
-        frame = requestAnimationFrame(tick)
-      },
-    })
-    update(0)
-    observer.observe(target)
-  }
-
-  if (experienceElement.value) {
-    observeCounter(experienceElement.value, 2500, (progress) => {
-      const elapsedMonths = Math.floor(months * (1 - (1 - progress) ** 3))
-      experienceCounter.value = formatExperience(elapsedMonths)
-    })
-  }
-
-  for (const metric of skillsDashboard.value?.querySelectorAll<HTMLElement>('[data-score]') ?? []) {
-    const bar = metric.querySelector<HTMLElement>('.progress-wrapper')
-    const value = metric.querySelector<HTMLElement>('.metric-value')
-    if (!bar || !value) continue
-
-    const score = Number(metric.dataset.score)
-    metric.classList.add('metric-animated')
-    observeCounter(bar, 1500, (progress) => {
-      value.textContent = `${Math.round(score * progress)}%`
-    }, visible => metric.classList.toggle('metric-revealed', visible))
-  }
-
-  stopCounters = () => {
-    observer.disconnect()
-    for (const { stop } of counters.values()) stop()
-  }
+  if (!profileFacts.value || !('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  factsObserver = new IntersectionObserver(([entry]) => {
+    if (!entry?.isIntersecting) return
+    factsVisible.value = true
+    factsObserver?.disconnect()
+  }, { threshold: 0.3 })
+  factsObserver.observe(profileFacts.value)
 })
-
-onBeforeUnmount(() => stopCounters?.())
+onBeforeUnmount(() => factsObserver?.disconnect())
 
 useSeoMeta({
-  title: () => language.value === 'en' ? 'Maxim Ermolov · Product Designer' : 'Максим Ермолов · Продуктовый дизайнер',
+  title: () => english.value ? 'Maxim Ermolov · Product Designer & Design Engineer' : 'Максим Ермолов · Продуктовый дизайнер и Design Engineer',
   description: () => copy.value.intro,
+  ogTitle: () => english.value ? 'Maxim Ermolov · Design portfolio' : 'Максим Ермолов · Портфолио дизайнера',
+  ogDescription: () => copy.value.intro,
 })
 </script>
 
 <template>
-  <div class="content-wrapper profile-page">
-    <section class="First-section" aria-labelledby="profile-title">
-      <img v-magnetic="0.5" :src="'/images/Logo.svg'" alt="" class="logo-main" fetchpriority="high">
-      <div class="header">
-        <p class="profile-name">{{ language === 'en' ? 'Maxim Ermolov' : 'Максим Ермолов' }}</p>
-        <h1 id="profile-title" lang="en">PRODUCT DESIGNER</h1>
-        <p class="profile-focus">{{ copy.focus }}</p>
+  <div class="profile-page">
+    <section class="profile-hero" aria-labelledby="profile-title">
+      <div class="hero-identity">
+        <p class="profile-role">{{ copy.role }}</p>
+        <h1 id="profile-title">{{ english ? 'Maxim' : 'Максим' }}<br>{{ english ? 'Ermolov' : 'Ермолов' }}</h1>
+      </div>
+      <div class="hero-aside">
+        <img v-magnetic="0.35" src="/images/Logo.svg" alt="" class="hero-mark" width="72" height="72">
+        <p>{{ english
+          ? 'I design complex products and build interfaces in Vue and Nuxt. I took Lesson Space from idea to working MVP on my own.'
+          : 'Проектирую сложные продукты и собираю интерфейсы на Vue и Nuxt. Lesson Space сделал сам, от идеи до работающего MVP.' }}</p>
         <div class="profile-actions">
-          <NuxtLink v-magnetic :to="pathFor('portfolio')" class="btn profile-projects-link">
-            <span>{{ language === 'en' ? 'View projects' : 'Смотреть проекты' }}</span><span aria-hidden="true">→</span>
-          </NuxtLink>
-          <a v-magnetic :href="resumeUrl" class="btn"><span>{{ language === 'en' ? 'Download CV' : copy.resumeLabel }}</span></a>
+          <a v-magnetic :href="email" class="btn profile-contact">{{ english ? 'Get in touch' : 'Написать мне' }}</a>
+          <a :href="resumeUrl" class="text-link">{{ copy.resumeLabel }}</a>
         </div>
       </div>
     </section>
 
-    <div class="marquee-wrapper">
-      <div class="marquee-track">
-        <div v-for="repeat in 3" :key="repeat" class="marquee-list" :aria-hidden="repeat > 1 ? 'true' : undefined">
-          <div v-for="skill in specialties" :key="skill" class="skill">{{ skill }}</div>
-        </div>
+    <section class="featured-work" aria-labelledby="selected-work-title">
+      <div class="section-heading">
+        <h2 id="selected-work-title">{{ english ? 'Selected work' : 'Избранные проекты' }}</h2>
+        <NuxtLink :to="pathFor('portfolio')" class="text-link">{{ english ? 'All projects' : 'Все проекты' }}</NuxtLink>
       </div>
-    </div>
+      <div class="work-grid">
+        <ProjectCard v-for="project in featured" :key="project.slug" :project="project" featured :heading-level="3" />
+      </div>
+    </section>
 
-    <section class="about-me-wrapper" aria-labelledby="about-title">
-      <div class="about-me-line">
-        <div class="about-me">
-          <div class="about-me-text">
-            <h2 id="about-title">{{ copy.aboutTitle.toLocaleUpperCase(language) }}</h2>
-            <p>{{ copy.intro }}</p>
+    <section class="profile-about" aria-labelledby="about-title">
+      <div class="about-copy">
+        <h2 id="about-title">{{ copy.aboutTitle }}</h2>
+        <p>{{ copy.intro }}</p>
+        <dl ref="profileFacts" class="profile-facts" :class="{ 'facts-visible': factsVisible }">
+          <div>
+            <dt>{{ english ? 'Experience' : 'Опыт' }}</dt>
+            <dd>{{ english ? '4+ years in UX/UI' : '4+ года в UX/UI' }}</dd>
           </div>
-          <div class="about-me-image">
-            <img :src="'/images/Me.png'" alt="" loading="lazy" decoding="async">
+          <div>
+            <dt>{{ english ? 'Code' : 'Код' }}</dt>
+            <dd>Vue · Nuxt</dd>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="experience" aria-labelledby="experience-title">
-      <div class="experience-title">
-        <h2 id="experience-title">{{ copy.experienceTitle.toLocaleUpperCase(language) }}</h2>
-        <p id="experience-counter" ref="experienceElement" class="experience-counter" aria-hidden="true">{{ experienceCounter }}</p>
-        <span class="visually-hidden">{{ experienceAmount }}</span>
-      </div>
-      <div class="experience-text">
-        <div class="accordion">
-          <div v-for="(job, index) in copy.jobs" :key="job.company" class="accordion-item" :class="{ 'is-open': openJob === index }">
-            <button
-              class="accordion-header"
-              type="button"
-              :aria-expanded="openJob === index"
-              :aria-controls="`profile-job-${index}`"
-              @click="openJob = openJob === index ? undefined : index"
-            >
-              <span class="accordion-title">
-                <span class="accordion-role">{{ job.role }}</span>
-                <span class="accordion-company">{{ job.company }} {{ job.dates }}</span>
-              </span>
-              <img :src="'/images/arrow.svg'" alt="" class="accordion-icon">
-            </button>
-            <div :id="`profile-job-${index}`" class="accordion-content" :inert="openJob !== index">
-              <div class="accordion-inner">
-                <ul>
-                  <li v-for="highlight in job.highlights" :key="highlight.title"><span>{{ highlight.title }}:</span> {{ highlight.description }}</li>
-                </ul>
-              </div>
-            </div>
+          <div>
+            <dt>{{ english ? 'Languages' : 'Языки' }}</dt>
+            <dd>{{ english ? 'Russian · English B1' : 'Русский · Английский B1' }}</dd>
           </div>
-        </div>
+        </dl>
+      </div>
+      <div class="about-portrait">
+        <img src="/images/Me.png" :alt="english ? 'Maxim Ermolov' : 'Максим Ермолов'" loading="lazy" decoding="async">
       </div>
     </section>
 
-    <section ref="skillsDashboard" class="skills-dashboard" aria-labelledby="skills-heading">
-      <h2 id="skills-heading" class="visually-hidden">{{ language === 'en' ? 'Skills' : 'Навыки' }}</h2>
-      <div class="skills-container">
-        <div v-for="card in skillCards" :key="card.kind" class="skill-card" :class="card.kind">
-          <span class="card-label">{{ card.label }}</span>
-          <div v-for="(group, index) in card.items" :key="index" class="metric-item" :data-score="'score' in group ? group.score : undefined">
-            <div class="metric-info">
-              <h3>{{ group.name }}</h3>
-              <span v-if="'level' in group" class="metric-value">{{ group.level }}</span>
-              <template v-else>
-                <span class="metric-value" aria-hidden="true">{{ group.score }}%</span>
-                <span class="visually-hidden">{{ group.score }}%</span>
-              </template>
-            </div>
-            <div v-if="'score' in group" class="progress-wrapper" aria-hidden="true">
-              <div class="progress-bar" :style="{ width: `${group.score}%` }" />
-            </div>
-            <div v-if="group.tags.length" class="tag-group">
-              <span v-for="tag in group.tags" :key="tag" v-magnetic="0.25" class="tag">{{ tag }}</span>
-            </div>
-          </div>
-        </div>
+    <section class="profile-experience" aria-labelledby="experience-title">
+      <h2 id="experience-title">{{ copy.experienceTitle }}</h2>
+      <div class="experience-list">
+        <details v-for="job in copy.jobs" :key="job.company" class="experience-item">
+          <summary>
+            <span><strong>{{ job.role }}</strong><br>{{ job.company }}</span>
+            <span class="experience-dates">{{ job.dates }}</span>
+            <span class="disclosure-mark" aria-hidden="true"></span>
+          </summary>
+          <ul>
+            <li v-for="highlight in job.highlights" :key="highlight.title">{{ highlight.description }}</li>
+          </ul>
+        </details>
       </div>
     </section>
 
-    <section class="portfolio-preview" aria-labelledby="selected-work-title">
-      <div class="portfolio-preview-header">
-        <h2 id="selected-work-title">{{ language === 'en' ? 'Selected Works' : copy.selectedWorkTitle }}</h2>
-        <NuxtLink v-magnetic :to="pathFor('portfolio')" class="btn to-portfolio" :class="{ 'hide-on-mobile': language === 'ru' }">
-          <span>{{ language === 'en' ? 'All Works' : copy.seeAllWorkLabel }}</span>
-        </NuxtLink>
-      </div>
-      <div class="projects-container-preview">
-        <ProjectCard v-for="project in selected" :key="project.slug" :project="project" />
-        <NuxtLink v-if="language === 'ru'" v-magnetic :to="pathFor('portfolio')" class="btn to-portfolio show-on-mobile rotate-90">
-          <span>{{ copy.seeAllWorkLabel }}</span>
-        </NuxtLink>
-      </div>
-    </section>
-
-    <section class="education-wrapper" aria-labelledby="education-title">
-      <div v-for="item in copy.education" :key="item.institution" class="education">
-        <span class="card-label">// {{ copy.educationTitle.toLocaleUpperCase(language) }}</span>
-        <h2 id="education-title" class="education-title">DSTU {{ item.dates.replace('–', '\u00a0•\u00a0') }}</h2>
-        <p class="education-summary">{{ item.institution }}</p>
-        <div class="tag-group">
-          <span v-magnetic="0.25" class="tag">{{ item.degree }}</span>
-          <span v-for="detail in item.details" :key="detail" v-magnetic="0.25" class="tag">{{ detail }}</span>
-        </div>
+    <section class="profile-education" aria-labelledby="education-title">
+      <h2 id="education-title">{{ copy.educationTitle }}</h2>
+      <div v-for="item in copy.education" :key="item.institution">
+        <p>{{ item.institution }}</p>
+        <p>{{ item.degree }} · {{ item.dates }}</p>
       </div>
     </section>
   </div>
 </template>
-
-<style scoped>
-.metric-animated .progress-bar {
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: none;
-}
-
-.metric-revealed .progress-bar {
-  transform: scaleX(1);
-  transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
-}
-</style>
